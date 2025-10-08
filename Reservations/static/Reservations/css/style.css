@@ -1,0 +1,20 @@
+:root {
+    /* Colors */
+    --primary-color: hsl(173, 100%, 20%);;   /* blue */
+    --secondary-color: hsl(148, 100%, 92%);;
+    --bg-color: #f3f4f6;        
+    --bg-color-dark:hsl(206, 18%, 35%);      
+    --text-color: #111827;
+
+    /* Font */
+    --font-family: 'RailwayX', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
