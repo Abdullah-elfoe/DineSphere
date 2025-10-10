@@ -2,4 +2,247 @@
 
 
 {% block title %}Home{% endblock %}
-{% block main %}Home page{% endblock main %}
+{% block main %}
+
+<main>
+    <div class="hero">
+        <nav>
+            <p>⧲ Dine<span style="color: var(--ternary-color);">Sphere</span></p>
+            <ul>
+                <li>Home</li>
+                <li>About</li>
+                <li>Register</li>
+                <li>FAQs</li>
+            </ul>
+            <div>
+                <a href="/auth" class="back-to-top" style="border: 1px solid var(--secondary-color); border-radius: 8px;">Login</a>
+                <a href="/auth" class="back-to-top" style="border: 1px solid var(--secondary-color); border-radius: 8px;">Signup</a>
+            </div>
+        </nav>
+        <div class="hero-textbox">
+            <div class="hero-wrapper">
+
+                <h1>Welcome to Dine<span style="color: var(--ternary-color);">Sphere</span></h1>
+                <div>Dineshpere is a modern dining and restaurant discovery platform designed to make eating out
+                    effortless, exciting, and memorable. It bridges the gap between foodies and restaurants, ensuring a
+                    smooth dining experience from search to seat.</div>
+                <div class="search-bar">
+                    <!-- City Dropdown -->
+                    <select class="city-select">
+                        <option>Gulberg</option>
+                        <option>Ayesha Manzil</option>
+                        <option>Maymar</option>
+                        <option>Jinnah </option>
+                    </select>
+
+                    <!-- Text input -->
+                    <input type="text" class="search-input" placeholder="Cuisine, restaurant name...">
+
+                    <!-- Search Button -->
+                    <button class="search-btn">SEARCH</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section id="main-page">
+        <div class="carousels">
+            <div class="carousel">
+                <h1>Top Offers</h1>
+                <div>
+                    <div class="carousel-container">
+                        <div class="carousel-track">
+                            <div class="card">Card 1</div>
+                            <div class="card">Card 2</div>
+                            <div class="card">Card 3</div>
+                            <div class="card">Card 4</div>
+                            <div class="card">Card 5</div>
+                            <div class="card">Card 6</div>
+                        </div>
+                        <button class="carousel-btn btn-left">&#10094;</button>
+                        <button class="carousel-btn btn-right">&#10095;</button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="carousel">
+                <h1>Reserve a Table</h1>
+                <div>
+                    <div class="carousel-container">
+                        <div class="carousel-track">
+                            <div class="card">Card 1</div>
+                            <div class="card">Card 2</div>
+                            <div class="card">Card 3</div>
+                            <div class="card">Card 4</div>
+                            <div class="card">Card 5</div>
+                            <div class="card">Card 6</div>
+                        </div>
+                        <button class="carousel-btn btn-left">&#10094;</button>
+                        <button class="carousel-btn btn-right">&#10095;</button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="carousel">
+                <h1>Top Testaurants</h1>
+                <div>
+                    <div class="carousel-container">
+                        <div class="carousel-track">
+                            <div class="card">Card 1</div>
+                            <div class="card">Card 2</div>
+                            <div class="card">Card 3</div>
+                            <div class="card">Card 4</div>
+                            <div class="card">Card 5</div>
+                            <div class="card">Card 6</div>
+                        </div>
+                        <button class="carousel-btn btn-left">&#10094;</button>
+                        <button class="carousel-btn btn-right">&#10095;</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="poster">
+            <div class="poster-text">
+                <h1>Our Mobile Apps<br>are Coming Soon 🚀</h1>
+                <p>Get ready to explore, order, and enjoy with just a tap. Stay tuned for launch!</p>
+                <div class="store-buttons">
+                    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                        alt="App Store">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                        alt="Google Play">
+                </div>
+            </div>
+            <div class="poster-image">
+                <!-- Replace with your app screenshot -->
+                <img src="https://dummyimage.com/280x560/000/fff&text=App+Mockup" alt="App Mockup">
+            </div>
+        </div>
+        <div class="section" style="flex-direction: row-reverse;">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600" alt="Friends enjoying">
+
+            <div class="content">
+                <h2>Haven't Registered your <br><span>Restaurant</span> Yet?</h2>
+                <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered
+                    alteration. There are many. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas
+                    distinctio sit rem quod repellat esse nisi accusamus ullam! Voluptatem rem ex et nihil? </p>
+
+                <div class="stats">
+                    <div class="stat-box red">
+                        <h3>22</h3>
+                        <p>Years Experience</p>
+                    </div>
+                    <div class="stat-box blue">
+                        <h3>150K</h3>
+                        <p>Happy Customers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="faq-page-wrapper">
+            <div class="faq-content-grid">
+
+                <!-- LEFT PANEL (New: Image Placeholder) -->
+                <div class="image-placeholder-panel">
+                    <!-- This is the clean placeholder for your image -->
+                    <p class="text-xl font-bold text-gray-500">Image Goes Here</p>
+                </div>
+
+                <!-- RIGHT PANEL (New: Content) -->
+                <div class="faq-main-content">
+                    <h1 class="faq-title">Frequently Asked<br>Questions</h1>
+
+                    <!-- Search Input Group -->
+                    <div class="search-input-group">
+                        <input type="text" id="faqSearchInput" class="search-input" placeholder="Search question here">
+                        <span class="search-icon" aria-label="Search icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-6 h-6">
+                                <path
+                                    d="M10.5 4a6.5 6.5 0 100 13a6.5 6.5 0 000-13zm-8 6.5a8 8 0 1114.532 5.093l4.796 4.796a.75.75 0 01-1.06 1.06l-4.796-4.796A8 8 0 012.5 10.5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                    </div>
+
+                    <!-- Accordion List -->
+                    <div class="accordion-list" id="faqAccordion">
+
+                        <!-- Item 1 (Active by default) -->
+                        <div class="accordion-item active" data-search-terms="profile about company">
+                            <div class="accordion-header" role="button" tabindex="0">
+                                <span class="accordion-question">About our profile?</span>
+                                <span class="accordion-toggle-icon">+</span>
+                            </div>
+                            <div class="accordion-body">
+                                <p class="accordion-body-content">
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+                                    euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
+                                    minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
+                                    aliquip ex ea commodo consequat.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Item 2 -->
+                        <div class="accordion-item" data-search-terms="news updates topics release">
+                            <div class="accordion-header" role="button" tabindex="0">
+                                <span class="accordion-question">News and topics?</span>
+                                <span class="accordion-toggle-icon">+</span>
+                            </div>
+                            <div class="accordion-body">
+                                <p class="accordion-body-content">
+                                    Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie
+                                    consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et
+                                    iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore
+                                    te feugait nulla facilisi.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Item 3 -->
+                        <div class="accordion-item" data-search-terms="help usage guide tutorial">
+                            <div class="accordion-header" role="button" tabindex="0">
+                                <span class="accordion-question">How to use?</span>
+                                <span class="accordion-toggle-icon">+</span>
+                            </div>
+                            <div class="accordion-body">
+                                <p class="accordion-body-content">
+                                    Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id
+                                    quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus
+                                    legentis in iis qui facit eorum claritatem.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Item 4 -->
+                        <div class="accordion-item" data-search-terms="payment billing subscription cost">
+                            <div class="accordion-header" role="button" tabindex="0">
+                                <span class="accordion-question">Payment and Billing Issues?</span>
+                                <span class="accordion-toggle-icon">+</span>
+                            </div>
+                            <div class="accordion-body">
+                                <p class="accordion-body-content">
+                                    Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium
+                                    lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram,
+                                    anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta
+                                    decima.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+</main>
+
+
+
+{% endblock main %}
+
