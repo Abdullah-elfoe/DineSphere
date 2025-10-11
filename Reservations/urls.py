@@ -7,7 +7,7 @@ urlpatterns = [
     path("auth/", views.auth, name="auth"),
     path("logout/", views.home, name="logout"),
     path("Reservation/<slug:Restaurant_name>/", views.booking, name="Booking"),
-    path("checkout/", views.home, name="Checkout"),
+    path("checkout/", views.checkout, name="Checkout"),
     path("Restaurant_Registration/", views.home, name="Restaurant_Registration"),
 
 
