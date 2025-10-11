@@ -1,0 +1,202 @@
+@import url('variables.css');
+
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--primary-color); 
+            color: var(--secondary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            /* Placeholder for the background image/pattern, now using background color */
+            /* background-image: url('https://placehold.co/1920x1080/1a4d46/338c82?text=Geometric+Background+Pattern'); */
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Main Container for the form and header */
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 1.5rem;
+            margin: 1.1rem 0;
+            text-align: center;
+            /* Using a darker shade of the primary color for the container border */
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            border-radius: 0.5rem;
+            position: relative;
+            background-color: hsla(173, 50%, 15%, 0.9); /* Dark Teal with opacity */
+        }
+
+        /* Header Styling */
+        .logo-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: white;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-header h1 i {
+            color: var(--ternary-color); /* Using orange accent for logo detail */
+            margin-right: 0.25rem;
+        }
+        
+        .logo-header p {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--light-text);
+            margin-bottom: 2rem;
+        }
+
+        /* Toggle Buttons */
+        .auth-toggle-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--light-text);
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn.active {
+            color: var(--secondary-color); /* Highlight with mint green */
+            border-bottom-color: var(--secondary-color);
+        }
+
+        /* The Form Card (Visual container for the forms) */
+        .form-card {
+            position: relative;
+        }
+        
+        /* Viewport for the sliding forms (The area with visible forms) */
+        .form-slider-viewport {
+            overflow: hidden; /* THIS IS KEY: Hides the forms that are scrolled out of view */
+            border-radius: 0.5rem;
+            background-color: var(--card-overlay); /* Dark overlay for form background */
+            padding: 1.5rem 1.5rem 0; /* Padding for the top/sides of the forms */
+            /* Height will be set dynamically by JS, but this CSS transition ensures it's smooth */
+            transition: height 0.5s ease; 
+        }
+
+        /* The container that slides up/down */
+        .form-slider {
+            display: flex;
+            flex-direction: column; /* Stack forms vertically */
+            transition: transform 0.5s cubic-bezier(0.5, 0, 0.5, 1); /* Smooth vertical sliding */
+        }
+        
+        /* Individual forms styling */
+        .auth-form {
+            flex-shrink: 0; /* Prevents forms from shrinking */
+            width: 100%;
+            padding-bottom: 1.5rem; /* Padding for the bottom of each form */
+        }
+
+        /* Input Group Styling */
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+            padding-bottom: 0.25rem;
+        }
+
+        .input-group i {
+            font-size: 1.1rem;
+            margin-right: 1rem;
+            color: var(--secondary-color); /* Mint green icon color */
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="password"],
+        .input-group input[type="email"] {
+            background: none;
+            border: none;
+            outline: none;
+            width: 100%;
+            color: white;
+            font-size: 1rem;
+            padding: 0.5rem 0;
+            font-weight: 600;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+        }
+        
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border: none;
+            border-radius: 0.3rem;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            /* Gradient using Ternary and Primary colors */
+            background: var(--ternary-color);
+            transition: all 0.3s ease;
+            /* box-shadow: 0 4px 15px hsla(30, 80%, 55%, 0.4); */
+        }
+        
+        .submit-btn:hover {
+            /* Hover effect swaps the gradient direction */
+            /* background: linear-gradient(135deg, var(--primary-color), var(--ternary-color)); */
+            box-shadow: 0 6px 20px hsla(30, 80%, 55%, 0.6);
+        }
+        
+        /* Version text */
+        .version-text {
+            font-size: 0.8rem;
+            margin-top: 2rem;
+            color: var(--ternary-color); /* Using orange for version text */
+            font-weight: 600;
+        }
+
+        /* Checkbox and conditional field */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 1.5rem 0 1rem 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .checkbox-group input {
+            margin-right: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--ternary-color); /* Use orange for checkbox highlight */
+        }
+
+        /* Owner Code field (Hidden by default) */
+        .owner-code-group {
+            display: none;
+            margin-top: 1.5rem;
+        }
+        
+        .owner-code-group.visible {
+            display: flex;
+        }
+        
