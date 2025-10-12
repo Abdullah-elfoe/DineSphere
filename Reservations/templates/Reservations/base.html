@@ -15,6 +15,8 @@
     <title>{% block title %}{% endblock title %}</title>
 </head>
 <body>
+    <div class="cursor">🥄</div>
+    
     <!-- <header>This is header</header> -->
     {% block main %}{% endblock %}
     
@@ -68,11 +70,17 @@
             </div>
         </div>
 
-        <div class="copyright-strip">
-            Copyright © 2024, ataraxis.ai. All Rights Reserved.
-        </div>
+     
     </footer>
     <script src="{% static 'Reservations/js/crousels.js' %}"></script>
+    <script>
+  const cursor = document.querySelector('.cursor');
+
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+</script>
 </body>
 
 </html>

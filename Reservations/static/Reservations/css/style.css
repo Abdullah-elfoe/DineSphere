@@ -7,13 +7,59 @@ body {
   font-family: var(--font-family);
   background-color: var(--bg-color);
   color: var(--text-color);
+  cursor: none !important;
 }
 
+.cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-size: 2rem;   /* size of the spoon */
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: transform 0.05s linear;
+    z-index: 9999;
+  }
+
 .hero {
+  
   background-color: var(--primary-color);
+  background-image: url('../images/herobackdrop.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Keep the background image fixed in the viewport so the page content scrolls over it */
+  background-attachment: fixed;
   height: 100vh;
   color: var(--secondary-color);
   position: relative;
+  /* Create a stacking context so pseudo-element overlays don't cover the content */
+  isolation: isolate;
+}
+
+/* Semi-transparent color overlay so the hero keeps the primary-color tint at reduced opacity. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  background: var(--primary-color);
+  opacity: 0.85; /* change this value to increase/decrease tint strength */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Many mobile browsers ignore `background-attachment: fixed` for performance reasons.
+   Use a mobile fallback to avoid rendering issues. */
+@media (max-width: 768px) {
+  .hero {
+    background-attachment: scroll;
+  }
+}
+
+/* Ensure content inside the hero (nav, text boxes) appears above the overlay */
+nav, .hero-textbox {
+  position: relative;
+  z-index: 1;
 }
 
 nav {
@@ -33,7 +79,6 @@ nav ul {
 }
 
 nav ul li {
-  cursor: pointer;
   font-size: large;
   padding: 0 5px;
 }
@@ -41,12 +86,16 @@ nav ul li {
 nav ul li a {
   text-decoration: none;
   color: var(--secondary-color);
+  cursor: none;
+
   /* font-weight: 600; */
 }
 nav p {
   font-size: xx-large;
 }
-
+a, button {
+  cursor: none !important;
+}
 .hero-textbox {
   display: flex;
   justify-content: center;
@@ -94,7 +143,7 @@ nav p {
   font-size: 16px;
   outline: none;
   background: #fff;
-  cursor: pointer;
+  cursor: none;
 }
 
 .search-input {
@@ -117,7 +166,7 @@ nav p {
   border: none;
   padding: 14px 24px;
   font-size: 16px;
-  cursor: pointer;
+  cursor: none;
   font-weight: bold;
   /* border-radius: 0 12px 12px 0; */
   transition: background 0.3s;
@@ -137,13 +186,68 @@ nav p {
 
 /* Footer started */
 .site-footer {
-  background-color: var(--primary-color);
+  /* Use the same hero backdrop as the footer background. Keep a color tint via a pseudo-element
+     so the image remains visible but tinted by the primary color. */
+  background-color: transparent;
+  background-image: url('../images/herobackdrop.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Keep the image fixed in the viewport so it matches the hero's fixed background */
+  background-attachment: fixed;
   color: var(--secondary-color);
   margin-top: 10px;
   padding: 4rem 0 0;
   font-size: 0.95rem;
   position: relative;
   overflow: hidden;
+}
+
+/* Poster section: use the same backdrop + tint so it visually matches hero/footer */
+.poster {
+  background-color: transparent;
+  background-image: url('../images/herobackdrop.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* fixed so content scrolls over the image like the hero/footer */
+  background-attachment: fixed;
+  padding: 2.5rem 1.5rem;
+  color: var(--text-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.poster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--primary-color);
+  opacity: 0.75; /* adjust for stronger/weaker tint */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure poster children are above the overlay */
+.poster-text, .poster-image {
+  position: relative;
+  z-index: 1;
+}
+/* Tint overlay so footer keeps the brand color but shows the image underneath */
+.site-footer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--primary-color);
+  opacity: 0.85; /* adjust to increase/decrease tint */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure footer content sits above the overlay */
+.footer-content {
+  position: relative;
+  z-index: 1;
 }
 
 /* Main Content Grid */
@@ -161,6 +265,10 @@ nav p {
   .footer-content {
     grid-template-columns: 1fr;
     padding: 0 1rem 3rem;
+  }
+  /* Mobile fallback: background-attachment fixed can be ignored or cause rendering issues on mobile */
+  .site-footer {
+    background-attachment: scroll;
   }
 }
 
