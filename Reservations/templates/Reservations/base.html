@@ -10,12 +10,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Protest+Riot&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
  <link rel="stylesheet" href="{% static 'Reservations/css/style.css' %}">
  <link rel="stylesheet" href="{% static 'Reservations/css/crousels.css' %}">
+ {% block links %} {% endblock %}
 
     <title>{% block title %}{% endblock title %}</title>
 </head>
 <body>
     <!-- <header>This is header</header> -->
     {% block main %}{% endblock %}
+    
     <footer class="site-footer">
         
         <div class="abstract-lines"></div>

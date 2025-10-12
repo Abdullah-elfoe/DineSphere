@@ -1,5 +1,190 @@
 {% extends "Reservations/base.html" %}
+{% load static %}
 
+{% block links %} 
+<link rel="stylesheet" href="{% static 'Reservations/css/moye.css' %}">
+{% endblock %}
 {% block title %}Reservations Page{% endblock %}
 
-{% block main %}Reservation Page, hi {{name}}{% endblock main %}
+{% block main %}
+ <div class="main-grid">
+
+        <!-- DIV 2 (Image - 40% Desktop) -->
+        <div class="div-image">
+            <img id="main-restaurant-image" 
+                 src="https://placehold.co/800x600/111827/ffffff?text=Imagehere" 
+                 onerror="this.src='https://placehold.co/800x600/111827/ffffff?text=Image+Missing'" 
+                 alt="Restaurant dining area" 
+                 class="image-placeholder">
+        </div>
+
+        <!-- DIV 1 (Content/Reservation - 60% Desktop) -->
+        <div class="div-content">
+            <h1 class="restaurant-name">{{name}}</h1>
+            <p class="restaurant-tagline">Where flavor meets elegance.</p>
+            
+            <div class="review-summary">
+                <i class="fas fa-star" style="color: gold;"></i> 
+                <i class="fas fa-star" style="color: gold;"></i> 
+                <i class="fas fa-star" style="color: gold;"></i> 
+                <i class="fas fa-star" style="color: gold;"></i> 
+                <i class="fas fa-star-half-alt" style="color: gold;"></i> 
+                4.5 (1,230 reviews)
+            </div>
+
+            <!-- Reservation Strip (Stacks reverse on mobile below 768px) -->
+            <div class="reservation-strip">
+                <div class="res-input-group">
+                    <span>Date</span>
+                    <p id="reservation-date">Fri, Oct. 24</p>
+                </div>
+                <div class="res-input-group">
+                    <span>Time</span>
+                    <p>8:00 PM</p>
+                </div>
+            </div>
+
+            <!-- Seating Type Radio Buttons -->
+            <div class="seating-type">
+                <label>Seating Type:</label>
+                <label>
+                    <input type="radio" name="seating" value="Standard" checked>
+                    Standard
+                </label>
+                <label>
+                    <input type="radio" name="seating" value="Royal">
+                    Royal (+$15)
+                </label>
+            </div>
+
+            <!-- Increment/Decrement Panel and Reserve Button -->
+            <div class="reservation-controls">
+                
+                <!-- Party Size Control -->
+                <div class="party-size-control">
+                    <button class="control-btn" id="decrement-btn" onclick="updatePartySize(-1)">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <input type="text" id="party-size" value="2" readonly>
+                    <button class="control-btn" id="increment-btn" onclick="updatePartySize(1)">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <!-- Reserve Button -->
+                <button class="reserve-btn" onclick="console.log('Reserved for ' + document.getElementById('party-size').value + ' on ' + document.getElementById('reservation-date').innerText)">
+                    Reserve Now
+                </button>
+            </div>
+
+            <!-- Description Section -->
+            <div class="description">
+                <h3 class="aboutus-heading">About Us</h3>
+                <p>Nestled in the heart of the city, The Crimson Plate offers a unique blend of traditional French cuisine and modern culinary innovation. Our chefs meticulously source local ingredients to create seasonal menus that promise an unforgettable dining experience. Perfect for anniversaries, business dinners, or simply a night of exquisite flavor.</p>
+            </div>
+        </div>
+        
+        <!-- DIV 3 (Reviews - 25% Desktop) -->
+        <div class="div-reviews">
+            <h2 class="reviews-title">Reviews</h2>
+
+            <!-- Main Rating Score -->
+            <div class="rating-main">
+                <span class="rating-score">4.0</span>
+                <div>
+                    <div class="rating-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                    </div>
+                    <span class="rating-count">35K ratings</span>
+                </div>
+            </div>
+            
+            <!-- Rating Bars (Responsive) -->
+            <div class="rating-bars">
+                <!-- 5.0 -->
+                <div class="rating-bar-row">
+                    <p>5.0</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 70%;"></div>
+                    </div>
+                    <span>14K reviews</span>
+                </div>
+                <!-- 4.0 -->
+                <div class="rating-bar-row">
+                    <p>4.0</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 30%;"></div>
+                    </div>
+                    <span>6K reviews</span>
+                </div>
+                <!-- 3.0 -->
+                <div class="rating-bar-row">
+                    <p>3.0</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 20%;"></div>
+                    </div>
+                    <span>4K reviews</span>
+                </div>
+                <!-- 2.0 -->
+                <div class="rating-bar-row">
+                    <p>2.0</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 5%;"></div>
+                    </div>
+                    <span>800 reviews</span>
+                </div>
+                <!-- 1.0 -->
+                <div class="rating-bar-row">
+                    <p>1.0</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 45%;"></div>
+                    </div>
+                    <span>9K reviews</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIV 4 (Testimonial Carousel - 75% Desktop) -->
+        <div class="div-testimonials">
+            <h2 class="reviews-title" style="color: white; border-bottom-color: rgba(255, 255, 255, 0.3);">What Our Guests Say</h2>
+            <div class="carousel-container">
+                <div class="carousel-track" id="testimonial-track">
+                    <!-- Slide 1 -->
+                    <div class="testimonial-slide">
+                        <div class="testimonial-header">
+                            <img src="https://placehold.co/60x60/ffffff/000000?text=J" onerror="this.src='https://placehold.co/60x60/ffffff/000000?text=P';" alt="Testimonial Photo" class="testimonial-img">
+                            <span class="testimonial-name">James K.</span>
+                        </div>
+                        <p class="testimonial-content">"Absolutely breathtaking experience! The Royal seating was worth every penny, offering a secluded and luxurious atmosphere. The sommelier's recommendation was perfect, and the service was impeccable. A true gem in the city!"</p>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="testimonial-slide">
+                        <div class="testimonial-header">
+                            <img src="https://placehold.co/60x60/ffffff/000000?text=M" onerror="this.src='https://placehold.co/60x60/ffffff/000000?text=P';" alt="Testimonial Photo" class="testimonial-img">
+                            <span class="testimonial-name">Maria L.</span>
+                        </div>
+                        <p class="testimonial-content">"Booked for 4 guests and it was flawless. The date/time reservation system was so smooth. The food was divine—especially the signature steak. Highly recommend this restaurant for any special occasion or even a casual, high-quality meal."</p>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="testimonial-slide">
+                        <div class="testimonial-header">
+                            <img src="https://placehold.co/60x60/ffffff/000000?text=A" onerror="this.src='https://placehold.co/60x60/ffffff/000000?text=P';" alt="Testimonial Photo" class="testimonial-img">
+                            <span class="testimonial-name">Alex R.</span>
+                        </div>
+                        <p class="testimonial-content">"The attention to detail in the design is as good as the food. The wait staff were attentive without being intrusive. I loved the wine list. This is my new favorite place for fine dining in the area. Five stars!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIV 5 (Footer Banner - Full Width) -->
+        <div class="div-footer">
+            <span>Discover The Crimson Plate Experience</span>
+        </div>
+
+    </div>
+
+
+	<script src="{% static 'Reservations/js/moye.js' %}"></script>
+
+{% endblock main %}
