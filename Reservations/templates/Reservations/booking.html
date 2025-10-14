@@ -3,6 +3,8 @@
 
 {% block links %} 
 <link rel="stylesheet" href="{% static 'Reservations/css/moye.css' %}">
+<!-- flatpickr CSS (loaded only on this page) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock %}
 {% block title %}Reservations Page{% endblock %}
 
@@ -20,7 +22,11 @@
 
         <!-- DIV 1 (Content/Reservation - 60% Desktop) -->
         <div class="div-content">
-            <h1 class="restaurant-name">{{name}}</h1>
+            <div class="" style="display: flex; align-items: center !important; gap: 10px; height:85px;"> 
+                <button  style=" display: block; border: none; font-size: 25px;">&#x21B6;</button>
+                <p class="restaurant-name" style=" font-weight: 900;">{{name}}</p>
+                
+            </div>
             <p class="restaurant-tagline">Where flavor meets elegance.</p>
             
             <div class="review-summary">
@@ -34,13 +40,13 @@
 
             <!-- Reservation Strip (Stacks reverse on mobile below 768px) -->
             <div class="reservation-strip">
-                <div class="res-input-group">
+                <div class="res-input-group" id="dateContainer">
                     <span>Date</span>
-                    <p id="reservation-date">Fri, Oct. 24</p>
+                     <p type="button" id="dateBtn" class="date-display">Fri, Oct. 24</p>
                 </div>
-                <div class="res-input-group">
+                <div class="res-input-group" id="timeContainer">
                     <span>Time</span>
-                    <p>8:00 PM</p>
+                    <p type="button" id="timeBtn" class="date-display">8:00 PM</p>
                 </div>
             </div>
 
@@ -72,7 +78,7 @@
                 </div>
 
                 <!-- Reserve Button -->
-                <button class="reserve-btn" onclick="console.log('Reserved for ' + document.getElementById('party-size').value + ' on ' + document.getElementById('reservation-date').innerText)">
+                <button class="reserve-btn" onclick="console.log('Reserved for ' + document.getElementById('party-size').value + ' on ' + document.getElementById('dateBtn').textContent)">
                     Reserve Now
                 </button>
             </div>
@@ -185,6 +191,8 @@
     </div>
 
 
-	<script src="{% static 'Reservations/js/moye.js' %}"></script>
+    <!-- flatpickr JS (ensure loaded before moye2.js uses it) -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{% static 'Reservations/js/moye2.js' %}"></script>
 
 {% endblock main %}

@@ -33,9 +33,9 @@
     transition: transform 0.5s ease-in-out;
 }
 
+
 .card {
-    flex: 0 0 calc(100% / 3);
-    /* show 3 cards by default */
+    flex: 0 0 calc(100% / 6); /* show 6 cards by default */
     margin: 0 8px;
     height: 200px;
     background: #e5e7eb;
@@ -46,6 +46,22 @@
     font-size: 20px;
     font-weight: bold;
     color: #374151;
+}
+
+@media (max-width: 1800px) {
+    .card { flex: 0 0 calc(100% / 5); }
+}
+@media (max-width: 1400px) {
+    .card { flex: 0 0 calc(100% / 4); }
+}
+@media (max-width: 1024px) {
+    .card { flex: 0 0 calc(100% / 3); }
+}
+@media (max-width: 768px) {
+    .card { flex: 0 0 calc(100% / 2); }
+}
+@media (max-width: 480px) {
+    .card { flex: 0 0 100%; }
 }
 
 .carousel-btn {
@@ -312,7 +328,7 @@
         }
 
         .search-input {
-            width: 70%;
+            /* width: 70%; */
             padding: 0.75rem 3rem 0.75rem 1.5rem;
             border: 2px solid var(--secondary-color);
             border-radius: 2rem;

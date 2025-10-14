@@ -1,115 +1,99 @@
-const track = document.querySelector(".carousel-track");
-    const cards = document.querySelectorAll(".card");
-    const prevBtn = document.querySelector(".btn-left");
-    const nextBtn = document.querySelector(".btn-right");
 
-    let index = 0;
-
-    function cardsPerView() {
-      if (window.innerWidth <= 480) return 1;
-      if (window.innerWidth <= 768) return 2;
-      return 3; // default desktop
-    }
-
-    function updateCarousel() {
-      const visible = cardsPerView();
-      const moveX = index * (100 / visible);
-      track.style.transform = `translateX(-${moveX}%)`;
-    }
-
-    nextBtn.addEventListener("click", () => {
-      const visible = cardsPerView();
-      index = (index + 1) % (cards.length - visible + 1);
-      updateCarousel();
-    });
-
-    prevBtn.addEventListener("click", () => {
-      const visible = cardsPerView();
-      index = (index - 1 + (cards.length - visible + 1)) % (cards.length - visible + 1);
-      updateCarousel();
-    });
-
-    window.addEventListener("resize", updateCarousel);
-
-
-
-
-// FAQs
 document.addEventListener('DOMContentLoaded', () => {
-            const accordionList = document.getElementById('faqAccordion');
-            const items = accordionList.querySelectorAll('.accordion-item');
+    // Carousel logic for all carousels
+    const carousels = document.querySelectorAll('.carousel');
+    carousels.forEach((carousel, i) => {
+        const track = carousel.querySelector('.carousel-track');
+        const cards = carousel.querySelectorAll('.card');
+        const prevBtn = carousel.querySelector('.btn-left');
+        const nextBtn = carousel.querySelector('.btn-right');
+        let index = 0;
 
-            // Function to handle the click/keyboard event
-            function toggleAccordionItem(item) {
-                const isActive = item.classList.contains('active');
+        function cardsPerView() {
+            if (window.innerWidth <= 480) return 1;
+            if (window.innerWidth <= 768) return 2;
+            if (window.innerWidth <= 1024) return 3;
+            if (window.innerWidth <= 1400) return 4;
+            if (window.innerWidth <= 1800) return 5;
+            return 6;
+        }
 
-                // Close all other open items
-                items.forEach(i => {
-                    if (i !== item) {
-                        i.classList.remove('active');
-                    }
-                });
+        function updateCarousel() {
+            const visible = cardsPerView();
+            // Clamp index so last page always shows visible cards
+            if (index > cards.length - visible) index = 0;
+            if (index < 0) index = cards.length - visible;
+            // Calculate percent to move
+            const moveX = (index * (100 / visible));
+            track.style.transform = `translateX(-${moveX}%)`;
+            // Show/hide buttons if needed (optional)
+        }
 
-                // Toggle the clicked item
-                if (!isActive) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            }
-
-            // 1. Setup Click Listeners for mouse/touch
-            items.forEach(item => {
-                const header = item.querySelector('.accordion-header');
-                header.addEventListener('click', () => toggleAccordionItem(item));
-
-                // 2. Setup Keydown Listeners for accessibility (Enter/Space)
-                header.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault(); // Prevent default action (like scrolling on space)
-                        toggleAccordionItem(item);
-                    }
-                });
-            });
-
-
-            /*
-            * Search Automation Preparation (Placeholder for future JS library integration)
-            * The core functionality of searching (filtering the list) is set up here.
-            * Later, you can replace this manual filtering with a more advanced search library
-            * that might also incorporate the Gemini API for smart content generation or grounding.
-            */
-            const searchInput = document.getElementById('faqSearchInput');
-            
-            // Debounce function to limit how often the filter function runs
-            let searchTimeout;
-            const debounce = (func, delay = 300) => {
-                return function(...args) {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => func.apply(this, args), delay);
-                };
-            };
-
-            const filterFaqItems = () => {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-
-                items.forEach(item => {
-                    const question = item.querySelector('.accordion-question').textContent.toLowerCase();
-                    const body = item.querySelector('.accordion-body-content').textContent.toLowerCase();
-                    const terms = item.getAttribute('data-search-terms') || "";
-
-                    const combinedText = `${question} ${body} ${terms}`;
-
-                    if (combinedText.includes(searchTerm) || searchTerm === "") {
-                        // Show the item
-                        item.style.display = 'block';
-                    } else {
-                        // Hide the item
-                        item.style.display = 'none';
-                    }
-                });
-            };
-
-            // Apply the debounced filter function to the input event
-            searchInput.addEventListener('input', debounce(filterFaqItems, 200));
+        nextBtn.addEventListener('click', () => {
+            const visible = cardsPerView();
+            index = (index + 1) % (cards.length - visible + 1);
+            updateCarousel();
         });
+        prevBtn.addEventListener('click', () => {
+            const visible = cardsPerView();
+            index = (index - 1 + (cards.length - visible + 1)) % (cards.length - visible + 1);
+            updateCarousel();
+        });
+        window.addEventListener('resize', updateCarousel);
+
+        // Auto-slide with stagger
+        setTimeout(() => {
+            setInterval(() => {
+                const visible = cardsPerView();
+                index = (index + 1) % (cards.length - visible + 1);
+                updateCarousel();
+            }, 4000);
+        }, i * 600); // stagger start by 0.6s per carousel
+
+        updateCarousel();
+    });
+
+    // FAQs (unchanged)
+    const accordionList = document.getElementById('faqAccordion');
+    if (accordionList) {
+        const items = accordionList.querySelectorAll('.accordion-item');
+        function toggleAccordionItem(item) {
+            const isActive = item.classList.contains('active');
+            items.forEach(i => { if (i !== item) i.classList.remove('active'); });
+            if (!isActive) item.classList.add('active'); else item.classList.remove('active');
+        }
+        items.forEach(item => {
+            const header = item.querySelector('.accordion-header');
+            header.addEventListener('click', () => toggleAccordionItem(item));
+            header.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    toggleAccordionItem(item);
+                }
+            });
+        });
+        const searchInput = document.getElementById('faqSearchInput');
+        let searchTimeout;
+        const debounce = (func, delay = 300) => {
+            return function(...args) {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        };
+        const filterFaqItems = () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            items.forEach(item => {
+                const question = item.querySelector('.accordion-question').textContent.toLowerCase();
+                const body = item.querySelector('.accordion-body-content').textContent.toLowerCase();
+                const terms = item.getAttribute('data-search-terms') || "";
+                const combinedText = `${question} ${body} ${terms}`;
+                if (combinedText.includes(searchTerm) || searchTerm === "") {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        };
+        searchInput.addEventListener('input', debounce(filterFaqItems, 200));
+    }
+});

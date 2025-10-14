@@ -1,27 +1,40 @@
 {% extends "Reservations/base.html" %}
 
+{% load static %}
+
 
 {% block title %}Home{% endblock %}
 {% block main %}
 
-<main>
+<main id="contentWrapper">
     <div class="hero">
         <nav>
-            <p>⧲ Dine<span style="color: var(--ternary-color);">Sphere</span></p>
-            <ul>
+            <p class="site-name">⧲ Dine<span style="color: var(--ternary-color);">Sphere</span></p>
+            <ul class="nav-items">
                 <li><a href="/">Home</a></li>
                 <li><a href="/">About</a></li>
                 <li><a href="/Restaurant_Registration">Register</a></li>
                 <li><a href="/#FAQsection">FAQs</a></li>
             </ul>
-            <div>
+            <div class="nav-actions">
                 <a href="/auth" class="back-to-top" style="border: 1px solid var(--secondary-color); border-radius: 8px;">Login</a>
                 <a href="/auth" class="back-to-top" style="border: 1px solid var(--secondary-color); border-radius: 8px;">Signup</a>
+            </div>
+
+            <!-- Container for hamburger/cross swap (z-index 9001) -->
+            <div class="nav-toggle-container" >
+                <!-- Hamburger for small screens (display toggled by JS) -->
+                <button id="hamburger" class="hamburger" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                 <!-- Cross button, positioned to replace hamburger on open (display toggled by JS) -->
+                <button id="mobileCloseNav" class="mobile-close-nav" aria-label="Close menu">✕</button>
             </div>
         </nav>
         <div class="hero-textbox">
             <div class="hero-wrapper">
-
                 <h1>Welcome to Dine<span style="color: var(--ternary-color);">Sphere</span></h1>
                 <div>Dineshpere is a modern dining and restaurant discovery platform designed to make eating out
                     effortless, exciting, and memorable. It bridges the gap between foodies and restaurants, ensuring a
@@ -36,7 +49,7 @@
                     </select>
 
                     <!-- Text input -->
-                    <input type="text" class="search-input" placeholder="Cuisine, restaurant name...">
+                    <input type="text" class="search-input"  placeholder="Cuisine, restaurant name...">
 
                     <!-- Search Button -->
                     <button class="search-btn">SEARCH</button>
@@ -241,8 +254,49 @@
 
     </section>
 </main>
+<!-- Mobile menu overlay (Outside the contentWrapper so it can cover it) -->
+<div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+    <div class="mobile-menu-inner">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/">About</a></li>
+            <li><a href="/Restaurant_Registration">Register</a></li>
+            <li><a href="/#FAQsection">FAQs</a></li>
+            <li><a href="/auth">Login</a></li>
+            <li><a href="/auth">Signup</a></li>
+        </ul>
+    </div>
+</div>
+
+<script src="{% static 'Reservations/js/hero.js' %}"></script>
 
 
 
 {% endblock main %}
+
+{% block scripts %}
+<!-- <script>
+    (function(){
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileClose = document.getElementById('mobileClose');
+
+        function openMenu(){
+            mobileMenu.classList.add('active');
+            hamburger.setAttribute('aria-expanded','true');
+            mobileMenu.setAttribute('aria-hidden','false');
+        }
+        function closeMenu(){
+            mobileMenu.classList.remove('active');
+            hamburger.setAttribute('aria-expanded','false');
+            mobileMenu.setAttribute('aria-hidden','true');
+        }
+
+        hamburger && hamburger.addEventListener('click', openMenu);
+        mobileClose && mobileClose.addEventListener('click', closeMenu);
+        mobileMenu && mobileMenu.addEventListener('click', (e)=>{ if(e.target === mobileMenu) closeMenu(); });
+        document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
+    })();
+</script> -->
+{% endblock %}
 

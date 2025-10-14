@@ -20,166 +20,321 @@ body {
     transition: transform 0.05s linear;
     z-index: 9999;
   }
+ .content-dimmed {
+            transition: opacity 0.3s ease;
+            opacity: 0.5; 
+            pointer-events: none; /* Block interaction */
+        }
+        
+        /* ================================================= */
+        /* Hero Section */
+        /* ================================================= */
+        .hero {
+            background-color: var(--primary-color);
+          background-image: url('../images/herobackdrop.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            height: 100vh;
+            color: var(--secondary-color);
+            position: relative;
+            isolation: isolate;
+            display: flex; 
+            flex-direction: column;
+        }
 
-.hero {
-  
-  background-color: var(--primary-color);
-  background-image: url('../images/herobackdrop.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  /* Keep the background image fixed in the viewport so the page content scrolls over it */
-  background-attachment: fixed;
-  height: 100vh;
-  color: var(--secondary-color);
-  position: relative;
-  /* Create a stacking context so pseudo-element overlays don't cover the content */
-  isolation: isolate;
-}
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--primary-color);
+            opacity: 0.85;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-/* Semi-transparent color overlay so the hero keeps the primary-color tint at reduced opacity. */
-.hero::after {
-  content: "";
-  position: absolute;
-  inset: 0; /* top:0; right:0; bottom:0; left:0; */
-  background: var(--primary-color);
-  opacity: 0.85; /* change this value to increase/decrease tint strength */
-  pointer-events: none;
-  z-index: 0;
-}
+        nav, .hero-textbox {
+            position: relative;
+            z-index: 1;
+        }
 
-/* Many mobile browsers ignore `background-attachment: fixed` for performance reasons.
-   Use a mobile fallback to avoid rendering issues. */
-@media (max-width: 768px) {
-  .hero {
-    background-attachment: scroll;
-  }
-}
+        nav {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-/* Ensure content inside the hero (nav, text boxes) appears above the overlay */
-nav, .hero-textbox {
-  position: relative;
-  z-index: 1;
-}
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+        }
 
-nav {
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+        nav ul li {
+            font-size: large;
+            padding: 0 5px;
+        }
 
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 1.5rem;
-  margin: 0;
-  padding: 0;
-  /* border:  1px solid red; */
-}
+        nav ul li a {
+            text-decoration: none;
+            color: var(--secondary-color);
+        }
+        nav p {
+            font-size: xx-large;
+            font-weight: 700;
+        }
 
-nav ul li {
-  font-size: large;
-  padding: 0 5px;
-}
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-actions a {
+            padding: 8px 16px;
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        /* ================================================= */
+        /* Hero Textbox */
+        /* ================================================= */
+        .hero-textbox {
+            flex-grow: 1; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 20vh; 
+        }
 
-nav ul li a {
-  text-decoration: none;
-  color: var(--secondary-color);
-  cursor: none;
+        .hero-wrapper {
+            width: 50%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 0 1rem;
+        }
 
-  /* font-weight: 600; */
-}
-nav p {
-  font-size: xx-large;
-}
-a, button {
-  cursor: none !important;
-}
-.hero-textbox {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60vh;
-  /* border: 1px solid green; */
-  position: absolute;
-  bottom: 12%;
+        .hero-wrapper h1 {
+            font-size: 4rem;
+            margin: 0;
+            line-height: 1.1;
+        }
 
-}
+        .hero-wrapper div {
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
 
-.hero-wrapper {
-  /* border: 1px solid red; */
-  height: 250px;
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
+        /* ================================================= */
+        /* Searchbar */
+        /* ================================================= */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 1112px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 800px;
+            width: 100%;
+        }
 
-.hero-wrapper h1 {
-  font-size: 4rem;
-  margin: 0;
-}
+        .city-select {
+            border: none;
+            padding: 12px 16px;
+            font-size: 16px;
+            outline: none;
+            background: #fff;
+            border-right: 1px solid #eee;
+        }
 
-.hero-wrapper p {
-  font-size: 1.2rem;
-}
+        .search-input {
+            flex: 1;
+            border: none !important;
+            outline: none;
+            padding: 12px 16px;
+            font-size: 16px;
+            color: #333;
+            
+        }
 
-/* Searchbar */
-.search-bar {
-  display: flex;
-  align-items: center;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  max-width: 800px;
-  width: 100%;
-}
+        .search-input::placeholder {
+            font-style: italic;
+            color: #999;
+        }
 
-.city-select {
-  border: none;
-  padding: 12px 16px;
-  font-size: 16px;
-  outline: none;
-  background: #fff;
-  cursor: none;
-}
+        .search-btn {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            border: none;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
 
-.search-input {
-  flex: 1;
-  border: none !important;
-  outline: none;
-  padding: 12px 16px;
-  font-size: 16px;
-  color: #333;
-}
+        .search-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border: 1px solid white;
+        }
 
-.search-input::placeholder {
-  /* color: #999; */
-  font-style: italic;
-}
+        /* ================================================= */
+        /* Hamburger/Mobile Menu (Fixed Alignment) */
+        /* ================================================= */
 
-.search-btn {
-  background: var(--secondary-color);
-  color: var(--primary-color);
-  border: none;
-  padding: 14px 24px;
-  font-size: 16px;
-  cursor: none;
-  font-weight: bold;
-  /* border-radius: 0 12px 12px 0; */
-  transition: background 0.3s;
-}
+        /* Container to ensure both buttons are in the same spot */
+        .nav-toggle-container {
+          display: none;
+            position: relative;
+            z-index: 9001; 
+            height: 38px; /* Added height for flow on mobile */
+            width: 38px;  /* Added width for flow on mobile */
+        }
 
-.search-btn:hover {
-  /* background: #047857; */
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-  border: 1px solid white;
-  /* lighter green */
-}
+        /* Base styles for the toggle buttons - ABSOLUTE and CENTERED for exact alignment */
+        .hamburger, .mobile-close-nav { 
+            display: none; 
+            background: transparent; 
+            border: none; 
+            padding: 8px; 
+            position: absolute; 
+            top: 50%; /* Center vertically in the container */
+            right: 0;
+            transform: translateY(-50%);
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+            line-height: 1;
+            width: 38px;
+            height: 38px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
 
+        .hamburger-line { display: block; width: 22px; height: 2px; background: var(--secondary-color); margin: 4px 0; transition: all 0.3s; }
+        .mobile-close-nav { font-size: 2.5rem; font-weight: 300; display: flex; align-items: center; justify-content: center; opacity: 0; }
+
+        /* Mobile menu container (Full overlay, translucent backdrop) */
+        .mobile-menu { 
+            display: block; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(17,24,39,0.7); 
+            backdrop-filter: blur(6px); 
+            z-index: 9000; 
+            pointer-events: none; 
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Mobile menu inner panel (The sliding part) */
+        .mobile-menu-inner { 
+            position: absolute; 
+            right: 0; 
+            top: 0; 
+            height: 100%;
+            width: 80%; 
+            max-width: 320px; 
+            background: rgba(26, 26, 46, 0.98); 
+            color: white; 
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+            transform: translateX(100%); 
+            transition: transform 0.3s ease-out;
+            padding-top: 4rem; 
+            padding-left: 2rem;
+        }
+
+        /* Active state for menu */
+        .mobile-menu.active { 
+            opacity: 1;
+            pointer-events: auto; 
+        }
+        .mobile-menu.active .mobile-menu-inner {
+            transform: translateX(0); 
+        }
+
+        .mobile-menu ul { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1.5rem; 
+        }
+        .mobile-menu a { 
+            color: white; 
+            text-decoration: none; 
+            font-size: 1.3rem; 
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .mobile-menu a:hover {
+            color: var(--ternary-color);
+        }
+        
+        /* ================================================= */
+        /* Media Queries for Hero and Menu (Simplified) */
+        /* ================================================= */
+        @media (max-width: 850px) {
+            nav ul.nav-items, nav .nav-actions { display: none; }
+            
+            /* Show hamburger/cross container on mobile */
+            .nav-toggle-container { 
+                display: block;
+            }
+            .hamburger { display: block; opacity: 1; } /* Initial mobile state */
+            
+            /* Active state swaps the display properties via JS */
+            
+            /* Hero Textbox Adjustment */
+            .hero {
+                background-attachment: scroll;
+            }
+            .hero-textbox {
+                height: auto;
+                padding: 1.5rem 0;
+                align-items: flex-start;
+            }
+            .hero-wrapper {
+                width: 90%; 
+                height: auto;
+                padding: 0 1rem;
+            }
+            .hero-wrapper h1 {
+                font-size: 2.5rem; 
+            }
+
+            /* Search Bar Stacking */
+            .search-bar {
+                flex-direction: column; 
+                border-radius: 10px;
+                box-shadow: none;
+                width: 100%;
+                /* max-width: none; */
+                background: transparent; 
+            }
+
+            .city-select, .search-input, .search-btn {
+                width: 100%;
+                border-radius: 8px;
+                margin-bottom: 8px;
+                padding: 14px 16px; 
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15); 
+            }
+            .city-select, .search-input {
+                border: none;
+                border-right: none;
+            }
+            .search-btn {
+                margin-bottom: 0;
+            }
+        }
 /* Serachbar Ended */
 
 
@@ -408,3 +563,9 @@ a, button {
   transform: rotate(15deg) translate(200px, 300px);
   clip-path: polygon(75% 0, 100% 100%, 0 100%, 0 75%);
 }
+
+
+/* ================================================= */
+/* NEW: Content Wrapper Dimming Style */
+/* This applies when the menu is active */
+/* ================================================= */
