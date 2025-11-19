@@ -64,12 +64,15 @@
                 <div>
                     <div class="carousel-container">
                         <div class="carousel-track">
-                            <div class="card" onclick="location.href='/Reservation/Card-1'">Card 1</div>
-                            <div class="card" onclick="location.href='/Reservation/Card-2'">Card 2</div>
+                            {% for restaurant in Restaurants %}
+                                <!-- {{restaurant.name}} -->
+                                <div class="card" id="{{restaurant.name}}" onclick="location.href='/Reservation/{{restaurant.name}}'">{{restaurant.name}}</div>
+                            {% endfor %}
+                            <!-- <div class="card" onclick="location.href='/Reservation/Card-2'">Card 2</div>
                             <div class="card" onclick="location.href='/Reservation/Card-3'">Card 3</div>
                             <div class="card" onclick="location.href='/Reservation/Card-4'">Card 4</div>
                             <div class="card" onclick="location.href='/Reservation/Card-5'">Card 5</div>
-                            <div class="card" onclick="location.href='/Reservation/Card-6'">Card 6</div>
+                            <div class="card" onclick="location.href='/Reservation/Card-6'">Card 6</div> -->
                         </div>
                         <button class="carousel-btn btn-left">&#10094;</button>
                         <button class="carousel-btn btn-right">&#10095;</button>
@@ -82,12 +85,10 @@
                 <div>
                     <div class="carousel-container">
                         <div class="carousel-track">
-                            <div class="card">Card 1</div>
-                            <div class="card">Card 2</div>
-                            <div class="card">Card 3</div>
-                            <div class="card">Card 4</div>
-                            <div class="card">Card 5</div>
-                            <div class="card">Card 6</div>
+                            {% for restaurant in Restaurants %}
+                                <!-- {{restaurant.name}} -->
+                                <div class="card" id="{{restaurant.name}}" onclick="location.href='/Reservation/{{restaurant.name}}'">{{restaurant.name}}</div>
+                            {% endfor %}
                         </div>
                         <button class="carousel-btn btn-left">&#10094;</button>
                         <button class="carousel-btn btn-right">&#10095;</button>
@@ -100,12 +101,10 @@
                 <div>
                     <div class="carousel-container">
                         <div class="carousel-track">
-                            <div class="card">Card 1</div>
-                            <div class="card">Card 2</div>
-                            <div class="card">Card 3</div>
-                            <div class="card">Card 4</div>
-                            <div class="card">Card 5</div>
-                            <div class="card">Card 6</div>
+                            {% for restaurant in Restaurants %}
+                                <!-- {{restaurant.name}} -->
+                                <div class="card" id="{{restaurant.name}}" onclick="location.href='/Reservation/{{restaurant.name}}'">{{restaurant.name}}</div>
+                            {% endfor %}
                         </div>
                         <button class="carousel-btn btn-left">&#10094;</button>
                         <button class="carousel-btn btn-right">&#10095;</button>

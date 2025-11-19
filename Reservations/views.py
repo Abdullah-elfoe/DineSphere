@@ -1,10 +1,14 @@
 from django.shortcuts import render
+from .models import *
 
 
 
 
 def home(request):
-    return render(request, "Reservations/home.html")
+    restaurants = Restaurant.objects.all()
+    return render(request, "Reservations/home.html", {
+        "Restaurants": restaurants
+    })
 
 def auth(request):
     return render(request, "Reservations/auth.html")
