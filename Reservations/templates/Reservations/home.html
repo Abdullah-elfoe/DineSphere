@@ -1,10 +1,12 @@
 {% extends "Reservations/base.html" %}
 
+{% load range_tags %}
 {% load static %}
 
 
 {% block title %}Home{% endblock %}
 {% block main %}
+
 
 
 <main id="contentWrapper">
@@ -17,20 +19,36 @@
                 <li><a href="/Restaurant_Registration">Register</a></li>
                 <li><a href="/#FAQsection">FAQs</a></li>
             </ul>
+            
             <div class="nav-actions">
-                <a href="/auth" class="back-to-top" style="border: 1px solid var(--secondary-color); border-radius: 8px;">Login</a>
-                <a href="/auth" class="back-to-top" style="border: 1px solid var(--secondary-color); border-radius: 8px;">Signup</a>
+                {% if request.user.is_authenticated %}
+                <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: 1px; padding: 0; cursor: pointer;">
+                        <img src="https://placehold.co/40x40/008000/D88938?text={{ request.user.username|initials }}" 
+                            alt="{{ request.user.username }}" 
+                            style="border-radius: 30px; border: 1px solid white;">
+                    </button>
+                </form>
+                
+                {% else %}
+                <a href="/auth" class="back-to-top"
+                    style="border: 1px solid var(--secondary-color); border-radius: 8px;">Login</a>
+                <a href="/auth" class="back-to-top"
+                    style="border: 1px solid var(--secondary-color); border-radius: 8px;">Signup</a>
+                {% endif %}
             </div>
 
             <!-- Container for hamburger/cross swap (z-index 9001) -->
-            <div class="nav-toggle-container" >
+            <div class="nav-toggle-container">
                 <!-- Hamburger for small screens (display toggled by JS) -->
-                <button id="hamburger" class="hamburger" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+                <button id="hamburger" class="hamburger" aria-label="Open menu" aria-controls="mobileMenu"
+                    aria-expanded="false">
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                 </button>
-                 <!-- Cross button, positioned to replace hamburger on open (display toggled by JS) -->
+                <!-- Cross button, positioned to replace hamburger on open (display toggled by JS) -->
                 <button id="mobileCloseNav" class="mobile-close-nav" aria-label="Close menu">✕</button>
             </div>
         </nav>
@@ -50,7 +68,7 @@
                     </select>
 
                     <!-- Text input -->
-                    <input type="text" class="search-input"  placeholder="Cuisine, restaurant name...">
+                    <input type="text" class="search-input" placeholder="Cuisine, restaurant name...">
 
                     <!-- Search Button -->
                     <button class="search-btn">SEARCH</button>
@@ -66,8 +84,12 @@
                     <div class="carousel-container">
                         <div class="carousel-track">
                             {% for restaurant in Restaurants %}
-                                <!-- {{restaurant.name}} -->
-                                <div class="card" id="{{restaurant.name}}" onclick="location.href='/Reservation/{{restaurant.name}}'">{{restaurant.name}}</div>
+                            <!-- {{restaurant.name}} -->
+                            <div class="card" id="{{restaurant.name}}"
+                                onclick="location.href='/Reservation/{{restaurant.name|space_to_value:'-'}}'">
+                                <img src="https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}" alt="" 
+                                onmouseenter="this.src='{{ restaurant.image.url }}'" 
+                                onmouseleave="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
                             {% endfor %}
                             <!-- <div class="card" onclick="location.href='/Reservation/Card-2'">Card 2</div>
                             <div class="card" onclick="location.href='/Reservation/Card-3'">Card 3</div>
@@ -87,8 +109,12 @@
                     <div class="carousel-container">
                         <div class="carousel-track">
                             {% for restaurant in Restaurants %}
-                                <!-- {{restaurant.name}} -->
-                                <div class="card" id="{{restaurant.name}}" onclick="location.href='/Reservation/{{restaurant.name}}'">{{restaurant.name}}</div>
+                            <!-- {{restaurant.name}} -->
+                            <div class="card" id="{{restaurant.name}}"
+                                onclick="location.href='/Reservation/{{restaurant.name|space_to_value:'-'}}'">
+                                <img src="https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}" alt="" 
+                                onmouseenter="this.src='{{ restaurant.image.url }}'" 
+                                onmouseleave="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
                             {% endfor %}
                         </div>
                         <button class="carousel-btn btn-left">&#10094;</button>
@@ -103,8 +129,12 @@
                     <div class="carousel-container">
                         <div class="carousel-track">
                             {% for restaurant in Restaurants %}
-                                <!-- {{restaurant.name}} -->
-                                <div class="card" id="{{restaurant.name}}" onclick="location.href='/Reservation/{{restaurant.name}}'">{{restaurant.name}}</div>
+                            <!-- {{restaurant.name}} -->
+                            <div class="card" id="{{restaurant.name}}"
+                                onclick="location.href='/Reservation/{{restaurant.name|space_to_value:'-'}}'">
+                                <img src="https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}" alt="" 
+                                onmouseenter="this.src='{{ restaurant.image.url }}'" 
+                                onmouseleave="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
                             {% endfor %}
                         </div>
                         <button class="carousel-btn btn-left">&#10094;</button>
@@ -299,4 +329,3 @@
     })();
 </script> -->
 {% endblock %}
-

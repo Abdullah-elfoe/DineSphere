@@ -4,9 +4,13 @@
             const signupForm = document.getElementById('signup-form');
             const loginBtn = document.getElementById('login-btn');
             const signupBtn = document.getElementById('signup-btn');
-            const ownerCheckbox = document.getElementById('owner-checkbox');
-            const ownerCodeField = document.getElementById('owner-code-field');
+            // const ownerCheckbox = document.getElementById('owner-checkbox');
+            // const ownerCodeField = document.getElementById('owner-code-field');
             const formViewport = document.querySelector('.form-slider-viewport');
+
+
+            // ownerCheckbox.checked = false;
+            // ownerCodeField.classList.remove('visible');
             
             let currentMode = 'login'; // Track current state
             let loginHeight = 0; // Height of Login form content
@@ -15,8 +19,8 @@
             // Function to calculate the required heights
             function calculateFormHeights() {
                 // 1. Temporarily ensure the owner code field is visible to measure the MAX height of the signup form
-                const wasOwnerCodeVisible = ownerCodeField.classList.contains('visible');
-                ownerCodeField.classList.add('visible');
+                // const wasOwnerCodeVisible = ownerCodeField.classList.contains('visible');
+                // ownerCodeField.classList.add('visible');
                 
                 // 2. Measure the actual heights (including the form's internal padding)
                 loginHeight = loginForm.offsetHeight; 
@@ -24,9 +28,9 @@
                 
                 // 3. Restore the original visibility state of the owner code field
                 // This ensures that the state on the screen matches the state in the checkbox.
-                if (!wasOwnerCodeVisible && !ownerCheckbox.checked) {
-                     ownerCodeField.classList.remove('visible');
-                }
+                // if (!wasOwnerCodeVisible && !ownerCheckbox.checked) {
+                //      ownerCodeField.classList.remove('visible');
+                // }
                 
                 // 4. Set the initial viewport height to the current mode's height
                 // This ensures the page loads with the correct, shorter Login height.
@@ -55,8 +59,8 @@
                     targetHeight = loginHeight;
 
                     // Reset conditional field when switching back to Login
-                    ownerCheckbox.checked = false;
-                    ownerCodeField.classList.remove('visible');
+                    // ownerCheckbox.checked = false;
+                    // ownerCodeField.classList.remove('visible');
                 }
                 
                 // Apply the height and transform simultaneously for smooth transition
@@ -80,18 +84,7 @@
             signupBtn.addEventListener('click', () => switchMode('signup'));
 
             // Event listener for the conditional field logic (Owner Code)
-            ownerCheckbox.addEventListener('change', () => {
-                ownerCodeField.classList.toggle('visible', ownerCheckbox.checked);
-                
-                // If the user is on the signup page and toggles the owner field, we must adjust the viewport height instantly
-                if (currentMode === 'signup') {
-                    // Use requestAnimationFrame to wait for the DOM to update the field's visibility
-                    requestAnimationFrame(() => {
-                        // Dynamically set viewport height to the *current* signup form height
-                        formViewport.style.height = signupForm.offsetHeight + 'px';
-                    });
-                }
-            });
+            
             
             // Recalculate the heights on window resize to maintain responsiveness
             window.addEventListener('resize', calculateFormHeights);

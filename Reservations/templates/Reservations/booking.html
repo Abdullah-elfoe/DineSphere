@@ -115,7 +115,7 @@
                 </div>
 
                 <!-- Reserve Button -->
-                <button class="reserve-btn" onclick="placeOrder()">
+                <button class="reserve-btn"  {% if not request.user.is_authenticated %} onclick="alert('Login required!')" {% else %}onclick="placeOrder()"{% endif %} >
                     Reserve Now
                 </button>
             </div>

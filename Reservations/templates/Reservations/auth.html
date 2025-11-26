@@ -11,6 +11,16 @@
 	<title>Document</title>
 </head>
 <body>
+    {% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="msg {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 	 <div class="auth-container">
         <!-- Logo and Header -->
         <div class="logo-header">
@@ -33,50 +43,41 @@
                 <div class="form-slider" id="formSlider">
                 
                     <!-- Login Form (Top position by default) -->
-                    <form id="login-form" class="auth-form">
+                    <form id="login-form" class="auth-form" method="post" action="../login/">
+                        {% csrf_token %}
                         <div class="input-group">
                             <i class="fas fa-user"></i>
-                            <input type="text" placeholder="Username" required>
+                            <input type="text" name="username" placeholder="Username" required>
                         </div>
                         <div class="input-group">
                             <i class="fas fa-lock"></i>
-                            <input type="password" placeholder="********" required>
+                            <input type="password" name="password" placeholder="********" required>
                         </div>
                         <button type="submit" class="submit-btn">LOGIN</button>
                     </form>
     
                     <!-- Signup Form (Bottom position by default) -->
-                    <form id="signup-form" class="auth-form">
-                         <!-- Additional Email Field -->
-                         <div class="input-group">
+                    <form id="signup-form" class="auth-form" method="post" action="../signup/">
+                        {% csrf_token %}
+                        <!-- Additional Email Field -->
+                        <div class="input-group">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" placeholder="Email Address" required>
+                            <input type="email" name="email" placeholder="Email Address" required>
                         </div>
                         <!-- Username Field -->
                         <div class="input-group">
                             <i class="fas fa-user-plus"></i>
-                            <input type="text" placeholder="Desired Username" required>
+                            <input type="text" name="username" placeholder="Desired Username" required>
                         </div>
                         <!-- Password Field -->
                         <div class="input-group">
                             <i class="fas fa-lock"></i>
-                            <input type="password" placeholder="Create Password" required>
-                        </div>
-                        
-                        <!-- Checkbox -->
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="owner-checkbox">
-                            <label for="owner-checkbox">Are you an owner?</label>
-                        </div>
-                        
-                        <!-- Conditional Code Field -->
-                        <div class="owner-code-group input-group" id="owner-code-field">
-                            <i class="fas fa-key"></i>
-                            <input type="text" placeholder="Owner Code" required>
+                            <input type="password" name="password" placeholder="Create Password" required>
                         </div>
                         
                         <button type="submit" class="submit-btn">SIGNUP</button>
                     </form>
+
 
                 </div>
             </div>

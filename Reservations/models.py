@@ -36,10 +36,15 @@ class Restaurant(models.Model):
 class RestaurantSeating(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     seating_type = models.ForeignKey(SeatingType, on_delete=models.CASCADE)
-    available_seats = models.IntegerField(default=0)
+    total_seats = models.IntegerField(default=10,)
+    available_seats = models.IntegerField(default=0,)
+    price_per_seat = models.IntegerField(default=430,)
 
     class Meta:
         unique_together = ('restaurant', 'seating_type')
+
+    def __str__(self):
+        return f"Restaurant:{self.restaurant} Seating:{self.seating_type} contains:{self.available_seats}/{self.total_seats}"
 
 
 
@@ -55,12 +60,16 @@ class SpecialDay(models.Model):
 
 class Booking(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    booking_datetime = models.DateTimeField()
-    duration_minutes = models.IntegerField(default=1)
+    booking_start_dateTime = models.DateTimeField()
+    booking_end_dateTime = models.DateTimeField()
+    booking_seatingtype = models.ForeignKey(SeatingType, on_delete=models.SET_NULL, null=True)
+    booking_no_of_seats = models.IntegerField()
+    card_number = models.IntegerField()
+    name_on_the_card = models.CharField(max_length=30)
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.restaurant.name} - {self.booking_datetime}"
+        return f"{self.restaurant.name} - {self.booking_start_dateTime} to {self.booking_end_dateTime}"
 
 
 class Testimonials(models.Model):

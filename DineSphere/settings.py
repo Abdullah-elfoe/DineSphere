@@ -26,6 +26,8 @@ SECRET_KEY = 'django-insecure-mbq1qzb^5l&r2*zfmmnh&(v$-+ydimhe6ec13w(ouqo^%5^-4+
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+# settings.py
+FRONTEND_SESSION_COOKIE_NAME = 'frontend_sessionid'
 
 
 # Application definition
