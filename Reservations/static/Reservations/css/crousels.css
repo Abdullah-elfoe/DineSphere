@@ -385,6 +385,7 @@
 
         .accordion-question {
             /* The question text itself */
+            justify-content: auto;
         }
 
         .accordion-toggle-icon {

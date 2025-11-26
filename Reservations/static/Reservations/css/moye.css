@@ -232,7 +232,6 @@
     border: 1px solid var(--secondary-color);
     border-radius: 0.5rem;
     background-color: var(--secondary-color);
-    cursor: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     width: 100%;
 }
@@ -279,14 +278,12 @@
     white-space: nowrap;
     align-items: center;
     font-size: 0.95rem;
-    cursor: none !important;
 
 }
 
 .seating-type input[type="radio"] {
     margin-right: 0.5rem;
     accent-color: var(--ternary-color);
-    cursor: none !important;
 }
 
 
@@ -352,7 +349,6 @@
     /* Keep buttons a fixed square; remove extra horizontal padding that made them wider
                than the declared width (content-box default would add padding to width). */
     padding: 0;
-    cursor: none;
     transition: background-color 0.2s, transform 0.1s;
     font-size: 1rem;
     width: 70px;
@@ -379,7 +375,6 @@
     padding: 1rem 1.5rem;
     font-size: 1.1rem;
     font-weight: 900;
-    cursor: none;
     transition: background-color 0.2s, box-shadow 0.2s;
 }
 
@@ -533,4 +528,16 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     text-align: center;
     padding: 1rem;
+}
+
+
+#startTimeBtn, #endTimeBtn {
+    -webkit-appearance: none;  /* remove default dropdown arrow in Chrome/Safari */
+    -moz-appearance: none;     /* remove default dropdown arrow in Firefox */
+    appearance: none;          /* remove default dropdown arrow in other browsers */
+    border: none;              /* remove border */
+    background: none;
+    outline:none;
+    cursor:pointer;
+    padding: 10px 12px;  
 }

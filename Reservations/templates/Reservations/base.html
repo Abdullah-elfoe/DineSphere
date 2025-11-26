@@ -15,7 +15,6 @@
     <title>{% block title %}{% endblock title %}</title>
 </head>
 <body>
-    <div class="cursor">🥄</div>
     
     <!-- <header>This is header</header> -->
     {% block main %}{% endblock %}
@@ -74,12 +73,7 @@
     </footer>
     <script src="{% static 'Reservations/js/crousels.js' %}"></script>
     <script>
-  const cursor = document.querySelector('.cursor');
 
-  document.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-  });
 </script>
 </body>
 

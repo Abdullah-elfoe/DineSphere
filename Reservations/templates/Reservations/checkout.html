@@ -96,7 +96,7 @@
                             <!-- Placeholder Image 1 -->
                             <img src="https://placehold.co/70x70/ffffff/111827?text=Hair+Dryer" onerror="this.src='https://placehold.co/70x70/ffffff/111827?text=Item';" class="product-img" alt="Nano Titanium Hair Dryer">
                             <div>
-                                <p class="product-name">Elemen Foods</p>
+                                <p class="product-name">{{name}}</p>
                                 <p class="product-description">Best Local Restaurant Ideal for burgers</p>
                             </div>
                         </div>
@@ -109,12 +109,12 @@
                             <!-- Key-Value Pair 1 -->
                             <div class="details-input-group">
                                 <input type="text" value="Guests" class="details-input key" readonly onclick="event.stopPropagation();" disabled>
-                                <input type="text" value="2 people" class="details-input value" onclick="event.stopPropagation();" disabled>
+                                <input type="text" value="{{seating}}: {{party_size}} seats" class="details-input value" onclick="event.stopPropagation();" disabled>
                             </div>
                             <!-- Key-Value Pair 2 -->
                             <div class="details-input-group">
                                 <input type="text" value="Date Time" class="details-input key" readonly onclick="event.stopPropagation();" disabled>
-                                <input type="text" value="5-7pm " class="details-input value" onclick="event.stopPropagation();" disabled>
+                                <input type="text" value="{{date}} {{start_time}} to {{end_time}}" class="details-input value" onclick="event.stopPropagation();" disabled>
                             </div>
                             
                             <!-- Edit Button -->
@@ -127,43 +127,7 @@
                     </div>
                 </div>
 
-                <!-- Product 2: ACCORDION ITEM -->
-                <div class="product-item" onclick="toggleAccordion(this)">
-                    <!-- Accordion Header/Summary -->
-                    <div class="product-details">
-                        <div class="product-info-group">
-                            <!-- Placeholder Image 2 -->
-                            <img src="https://placehold.co/70x70/ffffff/111827?text=Luisa+H35" onerror="this.src='https://placehold.co/70x70/ffffff/111827?text=Item';" class="product-img" alt="Luisa H35 Hair Dryer">
-                            <div>
-                               <p class="product-name">Elemen Foods</p>
-                                <p class="product-description">Best Local Restaurant Ideal for burgers</p>
-                            </div>
-                        </div>
-                        <span class="product-price">$250.00</span>
-                    </div>
-
-                    <!-- Accordion Content (Key-Value Pairs and Edit Button) -->
-                    <div class="accordion-content">
-                        <div class="space-y-3 pt-2">
-                            <!-- Key-Value Pair 1 -->
-                            <div class="details-input-group">
-                                <input type="text" value="Guests" class="details-input key" readonly onclick="event.stopPropagation();" disabled>
-                                <input type="text" value="2 people" class="details-input value" onclick="event.stopPropagation();" disabled>
-                            </div>
-                            <!-- Key-Value Pair 2 -->
-                            <div class="details-input-group">
-                                <input type="text" value="Date Time" class="details-input key" readonly onclick="event.stopPropagation();" disabled>
-                                <input type="text" value="5-7pm " class="details-input value" onclick="event.stopPropagation();" disabled>
-                            </div>
-                            <!-- Edit Button -->
-                            <div class="edit-button-wrapper">
-                                <button class="edit-button" onclick="event.stopPropagation();">
-                                    Edit
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
 
             <!-- Price Summary -->
