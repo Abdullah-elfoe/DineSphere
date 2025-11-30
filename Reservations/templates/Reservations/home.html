@@ -5,6 +5,7 @@
 
 
 {% block title %}Home{% endblock %}
+
 {% block main %}
 
 
@@ -68,7 +69,7 @@
                     </select>
 
                     <!-- Text input -->
-                    <input type="text" class="search-input" placeholder="Cuisine, restaurant name...">
+                    <input type="text" class="search-input" id="thesearchbar" placeholder="Cuisine, restaurant name..." oninput="switchContent()">
 
                     <!-- Search Button -->
                     <button class="search-btn">SEARCH</button>
@@ -283,6 +284,7 @@
         </div>
 
     </section>
+    <section id="search-page"></section>
 </main>
 <!-- Mobile menu overlay (Outside the contentWrapper so it can cover it) -->
 <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
@@ -299,6 +301,8 @@
 </div>
 
 <script src="{% static 'Reservations/js/hero.js' %}"></script>
+<script src="{% static 'Reservations/js/search.js' %}"></script>
+
 
 
 

@@ -30,19 +30,24 @@
             <p class="restaurant-tagline">{{Restaurant.title}}</p>
             
             <div class="review-summary">
-                {% for star in 5|range_num %}
-                {% if ratings.average_rating >= forloop.counter %}
-                <i class="fas fa-star" style="color: gold;"></i> 
-                {% elif ratings.average_rating > forloop.counter0 %}
-                <i class="fas fa-star-half-alt" style="color: gold;"></i> 
-                {% else %}
-                <i class="far fa-star" style="color: gold;"></i>
-                {% endif %}
-                {% endfor %}
-                <!-- <i class="fas fa-star" style="color: gold;"></i> 
-                <i class="fas fa-star" style="color: gold;"></i> 
-                <i class="fas fa-star" style="color: gold;"></i>  -->
-                {{ratings.average_rating}} ({{ratings.total_reviews}} total reviews)
+                <div class="review-summary-content">
+                    {% for star in 5|range_num %}
+                    {% if ratings.average_rating >= forloop.counter %}
+                    <i class="fas fa-star" style="color: gold;"></i> 
+                    {% elif ratings.average_rating > forloop.counter0 %}
+                    <i class="fas fa-star-half-alt" style="color: gold;"></i> 
+                    {% else %}
+                    <i class="far fa-star" style="color: gold;"></i>
+                    {% endif %}
+                    {% endfor %}
+                    <!-- <i class="fas fa-star" style="color: gold;"></i> 
+                    <i class="fas fa-star" style="color: gold;"></i> 
+                    <i class="fas fa-star" style="color: gold;"></i>  -->
+                    {{ratings.average_rating}} ({{ratings.total_reviews}} total reviews)
+                </div>
+                <div id="priceInfo" class="price">
+                    ${{prices|firstPrice}}
+                </div>
             </div>
 
             <!-- Reservation Strip (Stacks reverse on mobile below 768px) -->
@@ -75,7 +80,7 @@
             
 
             <!-- Increment/Decrement Panel and Reserve Button -->
-            <div id="seatingsAllowed" class="reservation-controls" data-seatingsallowed="{{available_seats}}">
+            <div id="seatingsAllowed" class="reservation-controls" data-seatingsallowed="{{available_seats}}" data-prices="{{ prices }}">
                 
 
 
@@ -97,10 +102,7 @@
                     {% endfor %}
                 </div>
 
-                <!-- Increment/Decrement Panel and Reserve Button -->
-                <div id="seatingsAllowed" class="reservation-controls" data-seatingsallowed="{{ seatings.0.available_seats }}">
-                </div>
-
+        
 
                 
                 <!-- Party Size Control -->
@@ -211,6 +213,7 @@
         <div class="div-footer">
             <span>Discover The Crimson Plate Experience</span>
         </div>
+        
 
     </div>
 
@@ -222,6 +225,7 @@
         <input type="hidden" name="end_time" id="form_end">
         <input type="hidden" name="party_size" id="form_party">
         <input type="hidden" name="seating" id="form_seating">
+        <input type="hidden" name="price" id="form_price">
     </form>
 
     <!-- flatpickr JS (ensure loaded before moye2.js uses it) -->

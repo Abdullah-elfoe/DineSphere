@@ -45,6 +45,7 @@ def booking(request, Restaurant_name):
     restaurant_obj = Restaurant.objects.filter(name=Restaurant_name).first()
     seating_types = restaurant_obj.restaurantseating_set.select_related('seating_type').all()
     seating_numbers = [x.available_seats for x in seating_types]
+    prices = [x.price_per_seat for x in seating_types]
     testimonials = Testimonials.objects.filter(restaurant=restaurant_obj)
     ratings = ReviewSummary.objects.filter(restaurant=restaurant_obj).first()
     restaurant, calendar = daily_calendar_view(restaurant_id=restaurant_obj.id)
@@ -55,6 +56,7 @@ def booking(request, Restaurant_name):
         'Seating':seating_types,
         'testimonials':testimonials,
         'available_seats':dumps(seating_numbers),
+        'prices':dumps(prices),
         'ratings':ratings,
         'restaurant':restaurant,
         'calendar':dumps(calendar, cls=DjangoJSONEncoder)
@@ -72,8 +74,8 @@ def checkout(request):
     end_time = request.POST.get("end_time")
     party_size = request.POST.get("party_size")
     seating = request.POST.get("seating")   # from radio button
-
-    print(date, start_time, end_time, format_to_ampm(end_time), party_size, seating)
+    price = request.POST.get("price")
+    # print(date, start_time, end_time, format_to_ampm(end_time), party_size, seating)
     context = {
     "name":name,
     "date": date,
@@ -81,6 +83,7 @@ def checkout(request):
     "end_time": format_to_ampm(end_time),
     "party_size": party_size,
     "seating": seating,
+    "price":price
 }
 
     
@@ -152,8 +155,8 @@ def filter_booked_slots(restaurant, target_date):
         
         # 2. Check for overlap against all existing bookings
         for booking in existing_bookings:
-            print(f"Checking Slot: {slot_start} to {slot_end}")
-            print(f"Against Booking: {booking['booking_start_dateTime']} to {booking['booking_end_dateTime']}")
+            # print(f"Checking Slot: {slot_start} to {slot_end}")
+            # print(f"Against Booking: {booking['booking_start_dateTime']} to {booking['booking_end_dateTime']}")
             # Check for ANY overlap between the current slot's range 
             # (slot_start to slot_end) and the booking's range
             

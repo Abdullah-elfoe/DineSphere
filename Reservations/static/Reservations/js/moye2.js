@@ -160,11 +160,12 @@ function populateStartTimes() {
         el.style.width = width + "%";
     });
 }
-
+console.log(document.getElementById("seatingsAllowed").dataset.seatingsallowed);
 const PARTY_VALUES = JSON.parse(document.getElementById("seatingsAllowed").dataset.seatingsallowed);
+const Price = JSON.parse(document.getElementById("seatingsAllowed").dataset.prices);
 let PARTY_SIZE_MAX = 10;
 let PARTY_SIZE_MIN = 1;
-let partyIndex = 0
+let partyIndex = 0;
 let partySize = 2; // Initial value
 
         /**
@@ -175,6 +176,7 @@ let partySize = 2; // Initial value
             console.log(typeof PARTY_VALUES);
             
             const sizeInput = document.getElementById('party-size');
+            const price = document.getElementById("priceInfo");
             let currentSize = parseInt(sizeInput.value);
             let newSize = currentSize + delta;
 
@@ -182,11 +184,16 @@ let partySize = 2; // Initial value
             if (newSize >= PARTY_SIZE_MIN && newSize <= PARTY_VALUES[partyIndex]) {
                 partySize = newSize;
                 sizeInput.value = newSize;
+                price.innerText = `$${Price[partyIndex]*newSize}`;
+                
+
             } else {
                 // Instead of alert, we can visually indicate the limit
                 console.warn(`Party size limit reached: Max ${PARTY_VALUES[partyIndex]}, Min ${PARTY_SIZE_MIN}`);
             }
         }
+
+
         
         let currentSlide = 0;
         const track = document.getElementById('testimonial-track');
@@ -207,10 +214,14 @@ let partySize = 2; // Initial value
         setInterval(nextSlide, slideInterval);
 
         function changeIndex(index) {
+            let price = document.getElementById("priceInfo");
             partyIndex = index;
             document.getElementById("party-size").value = PARTY_SIZE_MIN;
+            price.innerText = `$${Price[index]}`;
+            
             // party-size
             console.log(index, typeof index, PARTY_VALUES[partyIndex]);
+            console.log(price.innerText + " EF");
             
         }
         function placeOrder() {
@@ -238,9 +249,13 @@ let partySize = 2; // Initial value
             const selectedSeating = document.querySelector("input[name='seating']:checked");
             document.getElementById("form_seating").value = selectedSeating.value;
 
+            document.getElementById("form_price").value = document.getElementById("priceInfo").innerText;
+            // console.log(document.getElementById("form_price").value + " GGGGGG");
+            
+
             // Submit the hidden form
             document.getElementById("reservationForm").submit();
 }
 
 
-         
+document.getElementById

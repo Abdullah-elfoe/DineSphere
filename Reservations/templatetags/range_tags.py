@@ -1,4 +1,5 @@
 from django import template
+from json import loads
 register = template.Library()
 
 @register.filter
@@ -36,3 +37,10 @@ def initials(text):
         return ""
     words = text.split()
     return "".join(word[0].upper() for word in words)
+
+
+@register.filter
+def firstPrice(text):
+    price = loads(text)
+    return price[0]
+    
