@@ -117,8 +117,10 @@ class ReviewSummary(models.Model):
         )
 
         return round(score / total, 1)
-
-    def __str__(self):
-        return str(self.average_rating())
-
+    
+    @property
+    def avg_rat(self):
+        return self.average_rating()
+    
+ 
 

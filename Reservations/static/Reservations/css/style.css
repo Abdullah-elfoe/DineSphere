@@ -568,3 +568,208 @@ body {
 /* NEW: Content Wrapper Dimming Style */
 /* This applies when the menu is active */
 /* ================================================= */
+/* ================================================= */
+/* Search Page Styles */
+/* ================================================= */
+
+.search-filters-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-bottom: 1px solid #eee;
+}
+
+/* Sorting Buttons */
+.sorting-options .filter-btn {
+    background: white;
+    border: 1px solid #ccc;
+    padding: 8px 15px;
+    margin-right: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.sorting-options .filter-btn.active,
+.sorting-options .filter-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border-color: var(--primary-color);
+}
+
+/* View Toggles (List/Grid) */
+.view-toggles {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.view-toggles .view-btn {
+    background: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #666;
+    transition: background 0.2s;
+}
+
+.view-toggles .view-btn.active {
+    background-color: #eee;
+    color: var(--primary-color);
+}
+
+.view-toggles .view-btn:first-child {
+    border-right: 1px solid #ccc;
+}
+
+/* ================================================= */
+/* Search Result Card (BASE & LIST VIEW) */
+/* ================================================= */
+
+.results-list, .results-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    gap: 30px;
+}
+.results-list {
+    display: flex;
+    flex-direction: column; /* Default for list view */
+}
+
+.result-card {
+    display: flex;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+    background: white;
+    position: relative;
+    cursor: pointer;
+}
+
+.result-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.result-card-image {
+    width: 350px; /* Fixed width for list view image */
+    height: 250px;
+    flex-shrink: 0;
+}
+
+.result-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.result-card-details {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-title-section h3, .result-card-details h3 {
+    font-size: 1.4rem;
+    margin: 0.5rem 0 0.8rem;
+    color: var(--primary-color);
+    line-height: 1.2;
+}
+
+.result-card-details p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0 0 0.5rem;
+}
+
+.card-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 1rem;
+}
+
+.card-rating span.stars {
+    color: var(--ternary-color);
+}
+
+.card-rating span.rating-score {
+    font-weight: 600;
+}
+
+.card-info-row {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+.card-info-row span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.card-price-section {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Price top-right in list view */
+}
+
+.card-price-section h4 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.guest-favorite {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 50px;
+    z-index: 10;
+}
+
+/* ================================================= */
+/* GRID VIEW STYLES */
+/* ================================================= */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.results-grid .result-card {
+    flex-direction: column; /* Stacks image and details vertically */
+    width: 100%;
+}
+
+.results-grid .result-card-image {
+    width: 100%;
+    height: 200px; /* Shorter image height in grid */
+}
+
+.results-grid .result-card-details {
+    flex-direction: column; /* Stack price below details in grid */
+    gap: 10px;
+}
+
+.results-grid .card-price-section {
+    text-align: left;
+    margin-top: 1rem;
+    align-self: flex-start;
+}

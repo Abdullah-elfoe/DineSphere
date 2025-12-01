@@ -31,8 +31,15 @@ def format_to_ampm(dt_str):
 
 def home(request):
     restaurants = Restaurant.objects.all()
+    min_prices = []
+    for restaurant in restaurants:
+        seating_prices = [x.price_per_seat for x in restaurant.restaurantseating_set.all()]
+        min_price = min(seating_prices) if seating_prices else None
+        min_prices.append(min_price)
+    combined = zip(restaurants,  [ReviewSummary.objects.filter(restaurant=x).first() for x in restaurants], min_prices)
     return render(request, "Reservations/home.html", {
-        "Restaurants": restaurants
+        "Restaurants": restaurants,
+        "combined":combined
     })
 
 def auth(request):

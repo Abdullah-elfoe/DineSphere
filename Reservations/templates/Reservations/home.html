@@ -62,10 +62,10 @@
                 <div class="search-bar">
                     <!-- City Dropdown -->
                     <select class="city-select">
-                        <option>Gulberg</option>
-                        <option>Ayesha Manzil</option>
-                        <option>Maymar</option>
-                        <option>Jinnah </option>
+                        <option>Karachi</option>
+                        <option>Lahore</option>
+                        <option>Islamabad</option>
+                        <option>Pindi</option>
                     </select>
 
                     <!-- Text input -->
@@ -165,13 +165,11 @@
         </div>
         <div class="section" style="flex-direction: row-reverse;">
             <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600" alt="Friends enjoying">
-
             <div class="content">
                 <h2>Haven't Registered your <br><span>Restaurant</span> Yet?</h2>
                 <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered
                     alteration. There are many. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas
                     distinctio sit rem quod repellat esse nisi accusamus ullam! Voluptatem rem ex et nihil? </p>
-
                 <div class="stats">
                     <div class="stat-box red">
                         <h3>22</h3>
@@ -284,7 +282,90 @@
         </div>
 
     </section>
-    <section id="search-page"></section>
+    <section id="search-page" style="display: none;">
+    <div class="search-filters-bar">
+        <div class="sorting-options">
+            <button class="filter-btn sort-by-date active" data-sort="review">Sort by review</button>
+            <button class="filter-btn sort-by-price" data-sort="price">Sort by price</button>
+        </div>
+
+        <div class="view-toggles">
+            <button class="view-btn list-view active" data-view="list" title="List View">
+                <i class="fa-solid fa-list"></i>
+            </button>
+            <button class="view-btn grid-view" data-view="grid" title="Grid View">
+                <i class="fa-solid fa-grip"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="searchResultsContainer" class="results-list">
+        {% for restaurant, review, mp in combined %}
+        
+        <div class="result-card" 
+             data-name="{{ restaurant }}" 
+             data-city="Gulberg"
+             data-seating="20"
+             data-rating="{{ review.avg_rat }}"
+             data-price="{{ mp }}"
+             data-date="20240115"
+             style="display: none;"
+             onclick="location.href='/Reservation/{{restaurant.name|space_to_value:'-'}}'">
+            
+            <div class="result-card-image">
+                <img src="{{ restaurant.image.url }}" alt="The Gold Plate Bistro">
+                <!-- <span class="guest-favorite">Guest favorite 🏆</span> -->
+            </div>
+            <div class="result-card-details">
+                <div class="left-content">
+                    <p>{{ restaurant.title }}</p>
+                    <h3>{{ restaurant.name }}</h3>
+                    
+                    <div class="card-rating">
+                        <span class="stars">
+                    {% for star in 5|range_num %}
+                    {% if review.average_rating >= forloop.counter %}
+                            <i class="fas fa-star" style="color: gold;"></i> 
+                            {% elif ratings.average_rating > forloop.counter0 %}
+                            <i class="fas fa-star-half-alt" style="color: gold;"></i> 
+                            {% else %}
+                            <i class="far fa-star" style="color: gold;"></i>
+                    {% endif %}
+                    {% endfor %}
+                        </span>
+                        <span class="rating-score">{{ review.average_rating }}</span>
+                        <span>{{ review.total_reviews }} reviews</span>
+                    </div>
+
+                    <div class="card-host-info">
+                        <span>{{restaurant.about_restaurant|truncatewords:12}}</span>
+                    </div>
+                    
+                    <!-- <div class="card-info-row">
+                        <span><i class="fa-solid fa-door"></i> {{ restaurant.seating }}</span>
+                        <span><i class="fa-solid fa-wifi"></i> Wi-Fi</span>
+                    </div> -->
+
+                    <div class="card-info-row">
+                        <span class="opening-time" data-open="{{ restaurant.default_opening_hour }}:00">
+                            From <i class="fa-solid fa-clock"></i> {{ restaurant.default_opening_hour }}:00
+                        </span>
+                        <span class="closing-time" data-close="{{ restaurant.default_closing_hour }}:00">
+                            To <i class="fa-solid fa-clock"></i> {{ restaurant.default_closing_hour }}:00
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-price-section">
+                    <h4>${{mp}} <span style="font-size: 1rem; display: inline;"></span></h4>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+        
+        </div>
+</section>
 </main>
 <!-- Mobile menu overlay (Outside the contentWrapper so it can cover it) -->
 <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
