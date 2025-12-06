@@ -161,3 +161,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+// ------------------- logout ------------------------
+// 1. Get Elements
+const logoutForm = document.getElementById('logout-form'); // Your existing Django form
+const openModalBtn = document.getElementById('openLogoutModal'); // The button that OPENS the modal
+const logoutModal = document.getElementById('logoutModal');
+const confirmBtn = document.getElementById('confirmLogout'); // The "Yes" button
+const cancelBtn = document.getElementById('cancelLogout'); // The "No" button
+
+
+// --- 2. Opening the Modal ---
+openModalBtn.addEventListener('click', () => {
+    // Open the native HTML <dialog> element
+    logoutModal.showModal();
+});
+
+// --- 3. Confirmation Logic: Submitting the Django Form ---
+confirmBtn.addEventListener('click', () => {
+    // Close the modal
+    logoutModal.close();
+    
+    // Programmatically submit your Django form
+    logoutForm.submit();
+});
+
+// --- 4. Cancellation Logic ---
+cancelBtn.addEventListener('click', () => {
+    // Just close the modal and do nothing
+    logoutModal.close();
+});
+
+// Optional: Close the dialog if the user clicks outside of it
+logoutModal.addEventListener('click', (event) => {
+    if (event.target === logoutModal) {
+        logoutModal.close();
+    }
+});

@@ -257,5 +257,3 @@ let partySize = 2; // Initial value
             document.getElementById("reservationForm").submit();
 }
 
-
-document.getElementById

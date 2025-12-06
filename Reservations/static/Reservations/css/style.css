@@ -515,7 +515,7 @@ body {
 
 .back-to-top:hover {
   background: transparent;
-  color: var(--secondary-color);
+  color: var(--secondary-color) !important;
 
 }
 
@@ -772,4 +772,46 @@ body {
     text-align: left;
     margin-top: 1rem;
     align-self: flex-start;
+}
+
+
+/* logout  */
+
+#logoutModal {
+    border: none;
+    border-radius: 8px;
+    padding: 20px 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    min-width: 300px;
+}
+
+#logoutModal::backdrop {
+    /* Optional: style the shaded background area */
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 10px;
+}
+
+.modal-actions button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#confirmLogout {
+    background-color: #dc3545; /* Red for Yes/Logout */
+    color: white;
+}
+
+#cancelLogout {
+    background-color: #f8f9fa; /* Light background for No/Stay */
+    color: #212529;
+    border: 1px solid #ced4da;
 }

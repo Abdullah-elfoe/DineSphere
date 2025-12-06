@@ -19,7 +19,7 @@
             <!-- Title and Back Button -->
             <div class="form-header">
                 <!-- Back Button (↶) -->
-                <button onclick="console.log('Back button clicked')" class="back-button" aria-label="Go back">
+                <button onclick="window.history.back()" class="back-button" aria-label="Go back">
                     &#x21B6;
                 </button>
                 <h1>Checkout</h1>
@@ -28,7 +28,7 @@
             <!-- Email Input -->
             <div class="form-section input-group">
                 <label for="username">Username</label>
-                <input value="{{request.user.username}}" type="text" id="username" name="thisisusername" class="input-checkout" disabled onfocus="this.style.outline='none';this.style.boxShadow='none'" > {{request.user.username}}
+                <input value="{{request.user.username}}" type="text" id="username" name="thisisusername" class="input-checkout" disabled onfocus="this.style.outline='none';this.style.boxShadow='none'" > 
             </div>
 
             <!-- Card Number Input -->

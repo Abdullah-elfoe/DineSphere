@@ -59,7 +59,7 @@
         }
         
         .back-button:hover {
-            color: #6b7280; /* Gray-600 equivalent */
+            color:  var(--primary-color); /* Gray-600 equivalent */
         }
 
         .form-header h1 {

@@ -240,13 +240,15 @@ def login_user(request):
         if request.user.is_authenticated:
              logout(request)
         user = authenticate(request, username=username, password=password)
-        print(user.email)
         if user is not None:
             login(request, user)
+            print("I am here")
             return redirect("home")  
         else:
             messages.error(request, "Invalid username or password")
-            return redirect("login")
+            
+
+            return redirect("auth")
 
     return redirect("home")
 

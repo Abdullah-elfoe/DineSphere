@@ -23,7 +23,7 @@
         <!-- DIV 1 (Content/Reservation - 60% Desktop) -->
         <div class="div-content">
             <div class="" style="display: flex; align-items: center !important; gap: 10px; height:85px;"> 
-                <button  style=" display: block; border: none; font-size: 25px;">&#x21B6;</button>
+                <button  onclick="window.history.back()" class="back-button">&#x21B6;</button>
                 <p id="r-name" class="restaurant-name" style=" font-weight: 900;">{{Restaurant.name}}</p>
                 
             </div>
@@ -117,7 +117,7 @@
                 </div>
 
                 <!-- Reserve Button -->
-                <button class="reserve-btn"  {% if not request.user.is_authenticated %} onclick="alert('Login required!')" {% else %}onclick="placeOrder()"{% endif %} >
+                <button class="reserve-btn"  {% if not request.user.is_authenticated %} onclick="alert('Login required!');window.location.href='../../auth';" {% else %}onclick="placeOrder()"{% endif %} >
                     Reserve Now
                 </button>
             </div>
@@ -139,8 +139,16 @@
                 <span class="rating-score">{{ratings.average_rating}}</span>
                 <div>
                     <div class="rating-stars">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
-                    </div>
+                         {% for star in 5|range_num %}
+                    {% if ratings.average_rating >= forloop.counter %}
+                    <i class="fas fa-star" style="color: gold;"></i> 
+                    {% elif ratings.average_rating > forloop.counter0 %}
+                    <i class="fas fa-star-half-alt" style="color: gold;"></i> 
+                    {% else %}
+                    <i class="far fa-star" style="color: gold;"></i>
+                    {% endif %}
+                    {% endfor %}
+                         </div>
                     <span class="rating-count">Verified by Customers</span>
                 </div>
             </div>

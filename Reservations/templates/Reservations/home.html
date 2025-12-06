@@ -8,7 +8,14 @@
 
 {% block main %}
 
-
+<dialog id="logoutModal">
+    <h2>Confirmation</h2>
+    <p>Do you really want to logout?</p>
+    <div class="modal-actions">
+        <button id="confirmLogout">Yes, Logout</button> 
+        <button id="cancelLogout">No, Stay</button>
+    </div>
+</dialog>
 
 <main id="contentWrapper">
     <div class="hero">
@@ -23,20 +30,24 @@
             
             <div class="nav-actions">
                 {% if request.user.is_authenticated %}
-                <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: inline;">
+               <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: inline;">
                     {% csrf_token %}
-                    <button type="submit" style="background: none; border: 1px; padding: 0; cursor: pointer;">
+                    
+                    <button type="button" id="openLogoutModal" style="background: none; border: 1px; padding: 0; cursor: pointer;">
+                        
                         <img src="https://placehold.co/40x40/008000/D88938?text={{ request.user.username|initials }}" 
                             alt="{{ request.user.username }}" 
                             style="border-radius: 30px; border: 1px solid white;">
                     </button>
+                    
                 </form>
                 
                 {% else %}
                 <a href="/auth" class="back-to-top"
-                    style="border: 1px solid var(--secondary-color); border-radius: 8px;">Login</a>
+  
+                    style="border: 1px solid var(--secondary-color); border-radius: 8px; color: var(--primary-color); ">Login</a>
                 <a href="/auth" class="back-to-top"
-                    style="border: 1px solid var(--secondary-color); border-radius: 8px;">Signup</a>
+                    style="border: 1px solid var(--secondary-color); border-radius: 8px; color: var(--primary-color);">Signup</a>
                 {% endif %}
             </div>
 
@@ -92,11 +103,7 @@
                                 onmouseenter="this.src='{{ restaurant.image.url }}'" 
                                 onmouseleave="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
                             {% endfor %}
-                            <!-- <div class="card" onclick="location.href='/Reservation/Card-2'">Card 2</div>
-                            <div class="card" onclick="location.href='/Reservation/Card-3'">Card 3</div>
-                            <div class="card" onclick="location.href='/Reservation/Card-4'">Card 4</div>
-                            <div class="card" onclick="location.href='/Reservation/Card-5'">Card 5</div>
-                            <div class="card" onclick="location.href='/Reservation/Card-6'">Card 6</div> -->
+                           
                         </div>
                         <button class="carousel-btn btn-left">&#10094;</button>
                         <button class="carousel-btn btn-right">&#10095;</button>
@@ -383,6 +390,7 @@
 
 <script src="{% static 'Reservations/js/hero.js' %}"></script>
 <script src="{% static 'Reservations/js/search.js' %}"></script>
+
 
 
 
