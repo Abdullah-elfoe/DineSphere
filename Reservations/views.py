@@ -30,7 +30,9 @@ def format_to_ampm(dt_str):
 
 
 def home(request):
-    restaurants = Restaurant.objects.all()
+    restaurants = Restaurant.objects.filter(is_approved=True)
+
+    
     min_prices = []
     for restaurant in restaurants:
         seating_prices = [x.price_per_seat for x in restaurant.restaurantseating_set.all()]
@@ -50,6 +52,11 @@ def auth(request):
 def booking(request, Restaurant_name):
     Restaurant_name = Restaurant_name.replace("-", " ").replace("_"," ")
     restaurant_obj = Restaurant.objects.filter(name=Restaurant_name).first()
+    if not restaurant_obj.is_approved:
+        return render(request, "Reservations/404.html", {
+            "message_title": "Restaurant Not Approved",
+            "message": """The restaurant you are trying to book is not approved yet. Please try again later."""
+        })
     seating_types = restaurant_obj.restaurantseating_set.select_related('seating_type').all()
     seating_numbers = [x.available_seats for x in seating_types]
     prices = [x.price_per_seat for x in seating_types]
@@ -331,3 +338,12 @@ def placeOrder(request):
 
     # Handle GET request
     return redirect("home")
+
+
+
+
+def _404(request, _=None, _2=None, _3=None, _4=None, _5=None):
+    return render(request, "Reservations/404.html", {
+        "message_title":"Page Not Found",
+        "message":"""Uh oh, we can't seem to find the page you're looking for. Try going back to the previous page or see our for more information"""
+    })

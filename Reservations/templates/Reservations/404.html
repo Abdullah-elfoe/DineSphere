@@ -1,0 +1,221 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found</title>
+    <!-- Link to Raleway font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Your provided CSS context for color variables */
+        :root {
+            /* Colors */
+            --primary-color: hsl(173, 100%, 20%);   /* blue */
+            --secondary-color: hsl(148, 100%, 92%);
+            --ternary-color: hsl(30, 80%, 55%); /* Rich Burnt Orange */
+            --bg-color: #f3f4f6;        
+            --bg-color-dark:hsl(206, 18%, 35%);      
+            --text-color: #111827;
+
+            /* Font */
+            --font-family: 'Raleway', sans-serif;
+
+            /* Page-specific variables */
+            --link-color: #0073b1; /* A standard social platform blue */
+            --button-bg: var(--primary-color); /* Using your primary color for the button */
+            --button-text: white;
+            --footer-text-color: #666666;
+            --footer-link-color: var(--text-color);
+            --wave-blue-light: hsl(200, 100%, 90%);
+            --wave-blue-dark: hsl(190, 70%, 75%);
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        /* --- Main Content Container --- */
+        .content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 2; /* Ensure content is above the wave graphic */
+        }
+
+        .error-title {
+            font-size: clamp(24px, 5vw, 36px); /* Responsive font size */
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            font-size: clamp(14px, 3vw, 16px);
+            color: #666;
+            max-width: 400px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .error-message a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 2px solid transparent; /* for effect */
+        }
+
+        .error-message a:hover {
+            border-bottom: 2px solid var(--link-color);
+        }
+
+        .go-to-feed-btn {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--button-bg);
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .go-to-feed-btn:hover {
+            background-color: transparent;
+            color: var(--button-bg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Graphic Container and Responsive Image --- */
+        .graphics-container {
+            /* This area mimics the ground/mountain graphic */
+            position: relative;
+            width: 100%;
+            height: 250px; /* Base height for the image area */
+            overflow: hidden;
+            z-index: 1; /* Below the main content */
+        }
+
+        /* Simple CSS wave graphic for the ground */
+        .wave-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px; /* Base height of the wave shape */
+            background: linear-gradient(to top, var(--wave-blue-light) 60%, var(--secondary-color) 100%);
+            border-top: 1px solid var(--wave-blue-light);
+        }
+
+        /* Container for the image itself */
+        .image-wrapper {
+            position: absolute;
+            bottom: 10px; /* Position above the wave floor */
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 150px; /* Max size of the image */
+            width: 30%; /* Responsive width */
+            height: auto;
+        }
+
+        /* The image will perfectly fill the wrapper and maintain aspect ratio */
+        .image-wrapper img {
+            display: block;
+            width: 100%;
+            height: auto;
+            object-fit: contain; /* Ensures the whole image is visible */
+        }
+
+        /* Placeholder URL for the telescope image */
+        /* NOTE: You MUST replace this with a real image URL or base64 data */
+        .image-wrapper img[src$="placeholder"] {
+             /* Use a placeholder image if the URL is not replaced */
+            
+            background-color: transparent;
+            border-radius: 50%;
+        }
+
+
+        /* --- Footer --- */
+        .footer {
+            background-color: transparent;
+            padding: 20px 40px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--footer-text-color);
+            z-index: 2;
+        }
+
+        .footer a {
+            margin: 0 10px;
+            color: var(--footer-link-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--link-color); /* Highlight on hover */
+            text-decoration: underline;
+        }
+        
+        /* Small screen adjustments */
+        @media (max-width: 600px) {
+            .footer {
+                padding: 15px 10px;
+            }
+            .footer a {
+                margin: 5px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Removed the header/language selector as requested -->
+
+    <div class="content">
+        
+        <div class="error-title">{{message_title}}</div>
+        <div class="error-message">
+            {{message}}
+        </div>
+        <a onclick="window.history.back()" class="go-to-feed-btn">Go Back</a>
+    </div>
+
+    <div class="graphics-container">
+        <!-- Blue wave graphic acts as the ground/mountain base -->
+        <div class="wave-layer"></div>
+        
+        <!-- Responsive image wrapper for the telescope -->
+        <div class="image-wrapper">
+        
+            <img src="{% static 'Reservations/images/telescope.png' %}" alt="Telescope graphic searching for the page">
+        </div>
+    </div>
+    
+    <div class="footer">
+        <span>Company Name <span style="font-size: 10px;">&copy;</span> 2024</span>
+        <a href="#">User Agreement</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Community Guidelines</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">Copyright Policy</a>
+        <a href="#">Guest Controls</a>
+    </div>
+
+</body>
+</html>

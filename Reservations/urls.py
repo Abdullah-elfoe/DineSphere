@@ -12,6 +12,12 @@ urlpatterns = [
     path("login/", views.login_user, name="login"),
     path("logout/", views.logout_user, name="logout"),
     path("placeOrder/", views.placeOrder, name="place"),
+    path("<slug:_>/", views._404),
+    path("<slug:_>/<slug:_2>/", views._404),
+    path("<slug:_>/<slug:_2>/<slug:_3>/", views._404),
+    path("<slug:_>/<slug:_2>/<slug:_3>/<slug:_4>/", views._404),
+    path("<slug:_>/<slug:_2>/<slug:_3>/<slug:_4>/<slug:_5>/", views._404),
+
 
 
 

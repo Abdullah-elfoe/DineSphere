@@ -29,6 +29,8 @@ class Restaurant(models.Model):
     slot_duration_minutes = models.IntegerField(default=60) # 1 hour default
     allow_advance_booking_days = models.IntegerField(default=60)
 
+    is_approved = models.BooleanField(default=False)
+
     def __str__(self):
         return self.name
 
