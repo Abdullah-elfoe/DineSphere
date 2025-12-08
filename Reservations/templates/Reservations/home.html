@@ -96,12 +96,14 @@
                     <div class="carousel-container">
                         <div class="carousel-track">
                             {% for restaurant in Restaurants %}
+                            {% if restaurant.has_top_offers %}
                             <!-- {{restaurant.name}} -->
                             <div class="card" id="{{restaurant.name}}"
                                 onclick="location.href='/Reservation/{{restaurant.name|space_to_value:'-'}}'">
-                                <img src="https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}" alt="" 
-                                onmouseenter="this.src='{{ restaurant.image.url }}'" 
-                                onmouseleave="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
+                                <img src="{{ restaurant.image.url }}" alt="" 
+                                onmouseleave="this.src='{{ restaurant.image.url }}'" 
+                                onmouseenter="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
+                            {% endif %}
                             {% endfor %}
                            
                         </div>
@@ -116,13 +118,13 @@
                 <div>
                     <div class="carousel-container">
                         <div class="carousel-track">
-                            {% for restaurant in Restaurants %}
+                            {% for restaurant in Restaurants|shuffleInstances %}
                             <!-- {{restaurant.name}} -->
                             <div class="card" id="{{restaurant.name}}"
                                 onclick="location.href='/Reservation/{{restaurant.name|space_to_value:'-'}}'">
-                                <img src="https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}" alt="" 
-                                onmouseenter="this.src='{{ restaurant.image.url }}'" 
-                                onmouseleave="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
+                                <img src="{{ restaurant.image.url }}" alt="" 
+                                onmouseleave="this.src='{{ restaurant.image.url }}'" 
+                                onmouseenter="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
                             {% endfor %}
                         </div>
                         <button class="carousel-btn btn-left">&#10094;</button>
@@ -136,13 +138,13 @@
                 <div>
                     <div class="carousel-container">
                         <div class="carousel-track">
-                            {% for restaurant in Restaurants %}
+                            {% for restaurant in Restaurants|shuffleInstances %}
                             <!-- {{restaurant.name}} -->
                             <div class="card" id="{{restaurant.name}}"
                                 onclick="location.href='/Reservation/{{restaurant.name|space_to_value:'-'}}'">
-                                <img src="https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}" alt="" 
-                                onmouseenter="this.src='{{ restaurant.image.url }}'" 
-                                onmouseleave="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
+                                <img src="{{ restaurant.image.url }}" alt="" 
+                                onmouseleave="this.src='{{ restaurant.image.url }}'" 
+                                onmouseenter="this.src='https://placehold.co/200x200/000000/FFFF00?text={{ restaurant.name|initials }}'"></div>
                             {% endfor %}
                         </div>
                         <button class="carousel-btn btn-left">&#10094;</button>
@@ -171,9 +173,9 @@
             </div>
         </div>
         <div class="section" style="flex-direction: row-reverse;">
-            <img src="{% static 'Reservations/images/mamponam.jpeg' %}" alt="Friends enjoying">
+            <img src="{% static 'Reservations/images/jb.jpg' %}" alt="Friends enjoying">
             <div class="content" id="who">
-                <h2>Who <span>are</span> we?</h2>
+                <h2>Connect <span>with</span> us?</h2>
                 <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered
                     alteration. There are many. Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas
                     distinctio sit rem quod repellat esse nisi accusamus ullam! Voluptatem rem ex et nihil? </p>

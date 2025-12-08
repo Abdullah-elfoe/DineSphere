@@ -124,5 +124,8 @@ class ReviewSummary(models.Model):
     def avg_rat(self):
         return self.average_rating()
     
+    def __str__(self):
+        return f"{self.average_rating()} ratings of {self.restaurant.name}"
+    
  
 

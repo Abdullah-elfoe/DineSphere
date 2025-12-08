@@ -1,5 +1,6 @@
 from django import template
 from json import loads
+from random import shuffle
 register = template.Library()
 
 @register.filter
@@ -43,4 +44,12 @@ def initials(text):
 def firstPrice(text):
     price = loads(text)
     return price[0]
+
+
+@register.filter
+def shuffleInstances(instances):
+    result = list(instances)
+    shuffle(result)
+    # print("Shuffled")
+    return result
     
