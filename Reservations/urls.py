@@ -1,5 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
+
+router = DefaultRouter()
+router.register(r'restaurants', views.RestaurantViewSet, basename='restaurants')
+router.register(r'bookings', views.BookingViewSet, basename='bookings')
+router.register(r'seating-types', views.SeatingTypeViewSet, basename='seating-types')
+router.register(r'testimonials', views.TestimonialViewSet, basename='testimonials')
 
 
 urlpatterns = [
@@ -12,13 +19,8 @@ urlpatterns = [
     path("login/", views.login_user, name="login"),
     path("logout/", views.logout_user, name="logout"),
     path("placeOrder/", views.placeOrder, name="place"),
-    path("<slug:_>/", views._404),
-    path("<slug:_>/<slug:_2>/", views._404),
-    path("<slug:_>/<slug:_2>/<slug:_3>/", views._404),
-    path("<slug:_>/<slug:_2>/<slug:_3>/<slug:_4>/", views._404),
-    path("<slug:_>/<slug:_2>/<slug:_3>/<slug:_4>/<slug:_5>/", views._404),
+    path("api/auth/<slug:action>", views.handleAuthAPI, name="handleAuthAPI"),
 
-
-
-
+    # ----------------- REST API routes -----------------
+    path('api/', include(router.urls)),
 ]

@@ -11,6 +11,264 @@ from django.contrib.auth.decorators import login_required
 
 from datetime import datetime
 
+
+# For my flutter app integration -----------------------------------------------------------------------------------
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import ReservationSerializer, RestaurantSerializer
+from rest_framework import status ,filters
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
+from rest_framework.authtoken.models import Token
+
+
+from .serializers import (
+    RestaurantSerializer,
+    RestaurantDetailSerializer,
+    BookingSerializer,
+    SeatingTypeSerializer,
+    RestaurantSeatingSerializer,
+    TestimonialsSerializer,
+    ReviewSummarySerializer,
+)
+
+# ------------------------------
+# 1️⃣ Restaurants (list + filter)
+# ------------------------------
+class RestaurantViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Restaurant.objects.filter(is_approved=True)
+    serializer_class = RestaurantSerializer
+    permission_classes = [permissions.AllowAny]
+
+    # optional filters via query params
+    def get_queryset(self):
+        qs = super().get_queryset()
+        search = self.request.query_params.get("search")
+        has_top_offers = self.request.query_params.get("has_top_offers")
+        if search:
+            qs = qs.filter(name__icontains=search)
+        if has_top_offers in ["true", "True", "1"]:
+            qs = qs.filter(has_top_offers=True)
+        return qs
+
+    # 2️⃣ Restaurant detail (product page)
+    def retrieve(self, request, pk=None):
+        restaurant = get_object_or_404(Restaurant, pk=pk)
+        serializer = RestaurantDetailSerializer(restaurant)
+        return Response(serializer.data)
+
+    # 5️⃣ Restaurant seating
+    @action(detail=True, methods=["get"])
+    def seating(self, request, pk=None):
+        qs = RestaurantSeating.objects.filter(restaurant_id=pk)
+        serializer = RestaurantSeatingSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    # 6️⃣ Testimonials for a restaurant
+    @action(detail=True, methods=["get"])
+    def testimonials(self, request, pk=None):
+        qs = Testimonials.objects.filter(restaurant_id=pk)
+        serializer = TestimonialsSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    # 7️⃣ Review summary for a restaurant
+    @action(detail=True, methods=["get"])
+    def review_summary(self, request, pk=None):
+        try:
+            summary = ReviewSummary.objects.get(restaurant_id=pk)
+            serializer = ReviewSummarySerializer(summary)
+            return Response(serializer.data)
+        except ReviewSummary.DoesNotExist:
+            return Response({"detail": "No review summary available."}, status=404)
+
+
+# ------------------------------
+# 3️⃣ Bookings (user-specific)
+# ------------------------------
+class BookingViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = BookingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Booking.objects.filter(customer=self.request.user)
+
+
+# ------------------------------
+# 4️⃣ Seating types
+# ------------------------------
+class SeatingTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SeatingType.objects.all()
+    serializer_class = SeatingTypeSerializer
+    permission_classes = [permissions.AllowAny]
+
+class TestimonialViewSet(viewsets.ModelViewSet):
+    queryset = Testimonials.objects.all()
+    serializer_class = TestimonialsSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['restaurant__id']  # filter by restaurant ID
+
+@api_view(['GET'])
+def handleGetAPI(request, action):
+
+    data = None
+    status_code = status.HTTP_200_OK
+
+    match action:
+        case "Restaurants":
+            qs = Restaurant.objects.filter(is_approved=True)
+            data = RestaurantSerializer(qs, many=True).data
+
+        case "Bookings":
+            qs = Booking.objects.all()
+            data = ReservationSerializer(qs, many=True).data
+
+        case _:
+            data = {
+                "success": False,
+                "error": "INVALID_ACTION",
+                "message": f"Unknown action '{action}'"
+            }
+            status_code = status.HTTP_400_BAD_REQUEST
+
+    return Response(data, status=status_code)
+
+@api_view(['GET'])
+def giveSpecificRestaurant(request, name):
+
+    data = None
+    status_code = status.HTTP_200_OK
+    name = name.replace("-", " ").replace("_"," ")
+
+    restaurant = Restaurant.objects.filter(
+        name=name,
+        is_approved=True
+    ).first()
+
+    if restaurant:
+        data = RestaurantSerializer(restaurant).data
+    else:
+        data = {
+            "success": False,
+            "error": "RESTAURANT_NOT_FOUND",
+            "message": f"Restaurant '{name}' not found or not approved"
+        }
+        status_code = status.HTTP_404_NOT_FOUND
+
+    return Response(data, status=status_code)
+
+
+
+
+
+@csrf_exempt  # OK for API if using tokens later
+def handleAuthAPI(request, action):
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Only POST allowed"},
+            status=405
+        )
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {"success": False, "message": "Invalid JSON"},
+            status=400
+        )
+
+    # --------------------
+    # LOGIN
+    # --------------------
+    print(action, "Yalili Yalila uswispiswisdigiamma")
+    if action == "login":
+        username = data.get("username")
+        password = data.get("password")
+
+        if not username or not password:
+            return JsonResponse(
+                {"success": False, "message": "Username and password required"},
+                status=400
+            )
+
+        user = authenticate(username=username, password=password)
+
+        if user is None:
+            return JsonResponse(
+                {"success": False, "message": "Invalid credentials"},
+                status=401
+            )
+
+        # 🔐 CREATE OR GET TOKEN
+        token, created = Token.objects.get_or_create(user=user)
+
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "Login successful",
+                "token": token.key,  # 🔥 THIS IS THE IMPORTANT PART
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                },
+            },
+            status=200
+        )
+
+    # --------------------
+    # REGISTER
+    # --------------------
+    elif action == "register":
+        username = data.get("username")
+        email = data.get("email")
+        password = data.get("password")
+
+        if not username or not password:
+            return JsonResponse(
+                {"success": False, "message": "Missing required fields"},
+                status=400
+            )
+
+        if User.objects.filter(username=username).exists():
+            return JsonResponse(
+                {"success": False, "message": "Username already exists"},
+                status=409
+            )
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,  # Django hashes automatically
+        )
+
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "Account created successfully",
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                },
+            },
+            status=201
+        )
+
+    # --------------------
+    # UNKNOWN ACTION
+    # --------------------
+    return JsonResponse(
+        {"success": False, "message": "Invalid action"},
+        status=404
+    )
+
+
+
+# end For my flutter app integration --------------------------------------------------------------------------------
+
 def format_to_ampm(dt_str):
     """Convert ISO datetime string to 'h:mm AM/PM', ignoring date and timezone completely"""
     if not dt_str:
