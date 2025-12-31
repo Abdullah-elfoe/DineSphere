@@ -48,7 +48,11 @@ class _HistoryPageState extends State<HistoryPage> {
           elevation: 0,
           title: const Text(
             "Bookings",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 24),
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w900,
+              fontSize: 24,
+            ),
           ),
           bottom: const TabBar(
             indicatorColor: Colors.redAccent,
@@ -65,7 +69,7 @@ class _HistoryPageState extends State<HistoryPage> {
         ),
         body: TabBarView(
           children: [
-            _buildTabContent("finished"),  // All data moved here as requested
+            _buildTabContent("finished"), // All data moved here as requested
             _buildEmptyState("No pending bookings"),
             _buildEmptyState("No cancelled bookings"),
           ],
@@ -79,9 +83,22 @@ class _HistoryPageState extends State<HistoryPage> {
       future: bookingsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: Colors.redAccent));
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.redAccent),
+          );
         }
-        if (snapshot.hasError) return Center(child: Text("Error: ${snapshot.error}"));
+        if (snapshot.hasError) {
+          print(snapshot.error);
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                "Either Server is down, \nor API is wrong or \nAuthorization token is missing!",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          );
+        }
 
         final bookings = snapshot.data ?? [];
         if (bookings.isEmpty) return _buildEmptyState("No records found");
@@ -89,7 +106,8 @@ class _HistoryPageState extends State<HistoryPage> {
         return ListView.builder(
           padding: const EdgeInsets.all(20),
           itemCount: bookings.length,
-          itemBuilder: (context, index) => _buildModernInfoCard(bookings[index]),
+          itemBuilder: (context, index) =>
+              _buildModernInfoCard(bookings[index]),
         );
       },
     );
@@ -102,7 +120,8 @@ class _HistoryPageState extends State<HistoryPage> {
     final end = DateTime.parse(booking['booking_end_dateTime']).toLocal();
 
     final dateStr = DateFormat('EEEE, MMM dd').format(start);
-    final timeRange = "${DateFormat('hh:mm a').format(start)} - ${DateFormat('hh:mm a').format(end)}";
+    final timeRange =
+        "${DateFormat('hh:mm a').format(start)} - ${DateFormat('hh:mm a').format(end)}";
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -152,24 +171,43 @@ class _HistoryPageState extends State<HistoryPage> {
                         ),
                         Text(
                           "PKR ${booking['total_price'] ?? '0'}",
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Text(
                       restaurant['title'] ?? "Table Reservation",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 15),
-                      child: Divider(height: 1, thickness: 1, color: Color(0xFFF1F1)),
+                      child: Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: Color(0xFFF1F1),
+                      ),
                     ),
-                    _buildInfoRow(Icons.calendar_month_outlined, "Date", dateStr),
+                    _buildInfoRow(
+                      Icons.calendar_month_outlined,
+                      "Date",
+                      dateStr,
+                    ),
                     const SizedBox(height: 10),
                     _buildInfoRow(Icons.access_time_rounded, "Time", timeRange),
                     const SizedBox(height: 10),
-                    _buildInfoRow(Icons.chair_alt_rounded, "Seats", "$seats People"),
+                    _buildInfoRow(
+                      Icons.chair_alt_rounded,
+                      "Seats",
+                      "$seats People",
+                    ),
                   ],
                 ),
               ),
@@ -187,11 +225,17 @@ class _HistoryPageState extends State<HistoryPage> {
         const SizedBox(width: 10),
         Text(
           "$title: ",
-          style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500),
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontWeight: FontWeight.w500,
+          ),
         ),
         Text(
           value,
-          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );

@@ -1,8 +1,4 @@
 import 'package:dinesphere/Widgets/tryAutoLogin.dart';
-import 'package:dinesphere/views/mainScreen.dart';
-import 'package:dinesphere/views/welcome.dart';
-import 'package:dinesphere/views/productDisplay.dart';
-import 'package:dinesphere/Widgets/tryAutoLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
