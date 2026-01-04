@@ -1,6 +1,6 @@
 
 
-const String deviceIP = "192.168.0.111";
+const String deviceIP = "127.0.0.1";
 const String port = "8000";
 const String API = "api/";
 

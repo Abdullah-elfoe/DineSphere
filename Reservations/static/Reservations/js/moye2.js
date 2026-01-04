@@ -150,13 +150,25 @@ function populateStartTimes() {
 });
 
 
-    function updateRatings() {
+function updateRatings() {
     const ids = ["one", "two", "three", "four", "five"];
-
+    
+    // 1. First, calculate the total count of all reviews
+    let totalReviews = 0;
     ids.forEach(id => {
         const el = document.getElementById(`${id}-star`);
-        const val = Number(el.dataset.val);
-        const width = Math.min(val * 10, 100);
+        totalReviews += Number(el.dataset.val) || 0;
+    });
+
+    // 2. Now update the widths based on the actual total
+    ids.forEach(id => {
+        const el = document.getElementById(`${id}-star`);
+        const val = Number(el.dataset.val) || 0;
+
+        // If there are no reviews at all, width is 0. 
+        // Otherwise, it's (this_category / total) * 100
+        const width = totalReviews > 0 ? (val / totalReviews) * 100 : 0;
+
         el.style.width = width + "%";
     });
 }
@@ -195,23 +207,62 @@ let partySize = 2; // Initial value
 
 
         
-        let currentSlide = 0;
         const track = document.getElementById('testimonial-track');
-        const slides = document.querySelectorAll('.testimonial-slide');
-        const totalSlides = slides.length;
-        const slideInterval = 4000; // Increased interval to 4 seconds for better readability
+            const slides = Array.from(track.children);
+            const dotsContainer = document.getElementById('carousel-dots');
+            
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+            const slideInterval = 2700;
 
-        /**
-         * Moves the carousel to the next slide.
-         */
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            // The 33.33% is calculated as 100% divided by totalSlides (3)
-            track.style.transform = `translateX(-${currentSlide * (100 / totalSlides)}%)`;
-        }
+            // 1. DYNAMICALLY SIZE THE TRACK
+            // Track width must be (Number of slides * 100%)
+            track.style.width = `${totalSlides * 100}%`;
 
-        // Start the carousel auto-slide loop
-        setInterval(nextSlide, slideInterval);
+            // 2. DYNAMICALLY SIZE EACH SLIDE
+            // Each slide must be (100 / Total Slides)% of the Track
+            slides.forEach(slide => {
+                slide.style.width = `${100 / totalSlides}%`;
+            });
+
+            // 3. GENERATE DOTS
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(index));
+                dotsContainer.appendChild(dot);
+            });
+
+            const dots = document.querySelectorAll('.dot');
+
+            function updateDots() {
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSlide);
+                });
+            }
+
+            function goToSlide(index) {
+                currentSlide = index;
+                // Move by calculating the percentage based on N slides
+                const percentage = -(currentSlide * (100 / totalSlides));
+                track.style.transform = `translateX(${percentage}%)`;
+                updateDots();
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                goToSlide(currentSlide);
+            }
+
+            // Start Auto-play
+            let autoSlide = setInterval(nextSlide, slideInterval);
+
+            // Optional: Pause on hover
+            const container = document.querySelector('.div-testimonials');
+            container.addEventListener('mouseenter', () => clearInterval(autoSlide));
+            container.addEventListener('mouseleave', () => autoSlide = setInterval(nextSlide, slideInterval));
+        
 
         function changeIndex(index) {
             let price = document.getElementById("priceInfo");

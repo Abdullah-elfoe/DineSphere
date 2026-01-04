@@ -24,9 +24,10 @@ class TryAutoLogin extends StatelessWidget {
         }
 
         if (snapshot.data == true) {
+          print(AuthStorage.getToken());
           return MainScreen();   // ✅ auto-login
         } else {
-          return const WelcomePage(); // ❌ not logged in
+          return WelcomePage(); // ❌ not logged in
         }
       },
     );

@@ -10,7 +10,5 @@ admin.site.register(Testimonials)
 admin.site.register(SpecialDay)
 admin.site.register(Booking)
 admin.site.register(RestaurantSeating)
-
-
-
-
+admin.site.register(FavouriteRestaurant)
+admin.site.register(UserProfile)

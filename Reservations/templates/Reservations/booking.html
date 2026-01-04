@@ -1,7 +1,7 @@
 {% extends "Reservations/base.html" %}
 {% load static %}
 {% load range_tags %}
-{% block links %} 
+{% block links %}
 <link rel="stylesheet" href="{% static 'Reservations/css/moye.css' %}">
 <!-- flatpickr CSS (loaded only on this page) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -9,235 +9,244 @@
 {% block title %}Reservations Page{% endblock %}
 
 {% block main %}
- <div class="main-grid">
+<div class="main-grid">
 
-        <!-- DIV 2 (Image - 40% Desktop) -->
-        <div class="div-image">
-            <img id="main-restaurant-image" 
-                 src="{{restaurant.image.url}}" 
-                 onerror="this.src='https://placehold.co/800x600/111827/ffffff?text=Image+Missing'" 
-                 alt="Restaurant dining area" 
-                 class="image-placeholder">
+    <!-- DIV 2 (Image - 40% Desktop) -->
+    <div class="div-image">
+        <img id="main-restaurant-image" src="{{restaurant.image.url}}"
+            onerror="this.src='https://placehold.co/800x600/111827/ffffff?text=Image+Missing'"
+            alt="Restaurant dining area" class="image-placeholder">
+    </div>
+
+    <!-- DIV 1 (Content/Reservation - 60% Desktop) -->
+    <div class="div-content">
+        <div class="" style="display: flex; align-items: center !important; gap: 10px; height:85px;">
+            <button onclick="window.history.back()" class="back-button">&#x21B6;</button>
+            <p id="r-name" class="restaurant-name" style=" font-weight: 900;">{{Restaurant.name}}</p>
+
         </div>
+        <p class="restaurant-tagline">{{Restaurant.title}}</p>
 
-        <!-- DIV 1 (Content/Reservation - 60% Desktop) -->
-        <div class="div-content">
-            <div class="" style="display: flex; align-items: center !important; gap: 10px; height:85px;"> 
-                <button  onclick="window.history.back()" class="back-button">&#x21B6;</button>
-                <p id="r-name" class="restaurant-name" style=" font-weight: 900;">{{Restaurant.name}}</p>
-                
-            </div>
-            <p class="restaurant-tagline">{{Restaurant.title}}</p>
-            
-            <div class="review-summary">
-                <div class="review-summary-content">
-                    {% for star in 5|range_num %}
-                    {% if ratings.average_rating >= forloop.counter %}
-                    <i class="fas fa-star" style="color: gold;"></i> 
-                    {% elif ratings.average_rating > forloop.counter0 %}
-                    <i class="fas fa-star-half-alt" style="color: gold;"></i> 
-                    {% else %}
-                    <i class="far fa-star" style="color: gold;"></i>
-                    {% endif %}
-                    {% endfor %}
-                    <!-- <i class="fas fa-star" style="color: gold;"></i> 
+        <div class="review-summary">
+            <div class="review-summary-content">
+                {% for star in 5|range_num %}
+                {% if ratings.average_rating >= forloop.counter %}
+                <i class="fas fa-star" style="color: gold;"></i>
+                {% elif ratings.average_rating > forloop.counter0 %}
+                <i class="fas fa-star-half-alt" style="color: gold;"></i>
+                {% else %}
+                <i class="far fa-star" style="color: gold;"></i>
+                {% endif %}
+                {% endfor %}
+                <!-- <i class="fas fa-star" style="color: gold;"></i> 
                     <i class="fas fa-star" style="color: gold;"></i> 
                     <i class="fas fa-star" style="color: gold;"></i>  -->
-                    {{ratings.average_rating}} ({{ratings.total_reviews}} total reviews)
-                </div>
-                <div id="priceInfo" class="price">
-                    ${{prices|firstPrice}}
-                </div>
+                {{ratings.average_rating}} ({{ratings.total_reviews}} total reviews)
             </div>
-
-            <!-- Reservation Strip (Stacks reverse on mobile below 768px) -->
-            <div class="reservation-strip">
-                <div class="res-input-group" id="dateContainer">
-                    <span>Date</span>
-                    <p type="button" id="dateBtn" class="date-display">Select Date</p>
-                </div>
-                <div class="res-input-group" id="startTimeContainer">
-                    <span>Start Hour</span>
-                    <!-- <p type="button" id="startTimeBtn" class="date-display">-</p> -->
-                    <select id="startTimeBtn" class="date-display"></select>
-                </div>
-                <div class="res-input-group" id="endTimeContainer">
-                    <span>End Hour</span>
-                    <!-- <p type="button" id="endTimeBtn" class="date-display">-</p> -->
-                    <select id="endTimeBtn" disabled class="date-display"></select>
-                </div>
+            <div id="priceInfo" class="price">
+                ${{prices|firstPrice}}
             </div>
+        </div>
 
-            <!-- Hidden script to store calendar JSON -->
-            <script type="application/json" id="calendarData">
+        <!-- Reservation Strip (Stacks reverse on mobile below 768px) -->
+        <div class="reservation-strip">
+            <div class="res-input-group" id="dateContainer">
+                <span>Date</span>
+                <p type="button" id="dateBtn" class="date-display">Select Date</p>
+            </div>
+            <div class="res-input-group" id="startTimeContainer">
+                <span>Start Hour</span>
+                <!-- <p type="button" id="startTimeBtn" class="date-display">-</p> -->
+                <select id="startTimeBtn" class="date-display"></select>
+            </div>
+            <div class="res-input-group" id="endTimeContainer">
+                <span>End Hour</span>
+                <!-- <p type="button" id="endTimeBtn" class="date-display">-</p> -->
+                <select id="endTimeBtn" disabled class="date-display"></select>
+            </div>
+        </div>
+
+        <!-- Hidden script to store calendar JSON -->
+        <script type="application/json" id="calendarData">
                 {{ calendar|safe }}
             </script>
 
-            <!-- Hidden slot duration -->
-            <span id="slotDuration" data-minutes="{{ restaurant.slot_duration_minutes }}" style="display:none"></span>
+        <!-- Hidden slot duration -->
+        <span id="slotDuration" data-minutes="{{ restaurant.slot_duration_minutes }}" style="display:none"></span>
 
-            <!-- Seating Type Radio Buttons -->
-            
-
-            <!-- Increment/Decrement Panel and Reserve Button -->
-            <div id="seatingsAllowed" class="reservation-controls" data-seatingsallowed="{{available_seats}}" data-prices="{{ prices }}">
-                
+        <!-- Seating Type Radio Buttons -->
 
 
+        <!-- Increment/Decrement Panel and Reserve Button -->
+        <div id="seatingsAllowed" class="reservation-controls" data-seatingsallowed="{{available_seats}}"
+            data-prices="{{ prices }}">
 
-                <div class="seating-type" id="seating-type">
-                    <label>Seating Type:</label>
-                    {% for rs in Seating %}
-                    <label>
-                        <input 
-                            type="radio" 
-                            name="seating" 
-                            value="{{ rs.seating_type.name }}" 
-                            {% if forloop.first %} checked="true" {% endif %} 
-                            data-available-seats="{{ rs.available_seats }}" 
-                            onclick="changeIndex(Number('{{ forloop.counter0 }}'))"
-                        >
-                        {{ rs.seating_type.name }}
-                    </label>
-                    {% endfor %}
-                </div>
 
-        
 
-                
-                <!-- Party Size Control -->
-                <div class="party-size-control">
-                    <button class="control-btn" id="decrement-btn" onclick="updatePartySize(-1)">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <input type="text" id="party-size" value="1" readonly>
-                    <button class="control-btn" id="increment-btn" onclick="updatePartySize(1)">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
 
-                <!-- Reserve Button -->
-                <button class="reserve-btn"  {% if not request.user.is_authenticated %} onclick="alert('Login required!');window.location.href='../../auth';" {% else %}onclick="placeOrder()"{% endif %} >
-                    Reserve Now
+            <div class="seating-type" id="seating-type">
+                <label>Seating Type:</label>
+                {% for rs in Seating %}
+                <label>
+                    <input type="radio" name="seating" value="{{ rs.seating_type.name }}" {% if forloop.first %}
+                        checked="true" {% endif %} data-available-seats="{{ rs.available_seats }}"
+                        onclick="changeIndex(Number('{{ forloop.counter0 }}'))">
+                    {{ rs.seating_type.name }}
+                </label>
+                {% endfor %}
+            </div>
+
+
+
+
+            <!-- Party Size Control -->
+            <div class="party-size-control">
+                <button class="control-btn" id="decrement-btn" onclick="updatePartySize(-1)">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <input type="text" id="party-size" value="1" readonly>
+                <button class="control-btn" id="increment-btn" onclick="updatePartySize(1)">
+                    <i class="fas fa-plus"></i>
                 </button>
             </div>
 
-            <!-- Description Section -->
-            <div class="description">
-                <h3 class="aboutus-heading">About Us</h3>
-                <!-- <p>Nestled in the heart of the city, The Crimson Plate offers a unique blend of traditional French cuisine and modern culinary innovation. Our chefs meticulously source local ingredients to create seasonal menus that promise an unforgettable dining experience. Perfect for anniversaries, business dinners, or simply a night of exquisite flavor.</p> -->
-                 <p>{{Restaurant.about_restaurant}}</p>
-            </div>
+            <!-- Reserve Button -->
+            <button class="reserve-btn" {% if not request.user.is_authenticated %}
+                onclick="alert('Login required!');window.location.href='../../auth';" {% else %}onclick="placeOrder()"
+                {% endif %}>
+                Reserve Now
+            </button>
         </div>
-        
-        <!-- DIV 3 (Reviews - 25% Desktop) -->
-        <div class="div-reviews">
-            <h2 class="reviews-title">Reviews</h2>
 
-            <!-- Main Rating Score -->
-            <div class="rating-main">
-                <span class="rating-score">{{ratings.average_rating}}</span>
-                <div>
-                    <div class="rating-stars">
-                         {% for star in 5|range_num %}
+        <!-- Description Section -->
+        <div class="description">
+            <h3 class="aboutus-heading">About Us</h3>
+            <!-- <p>Nestled in the heart of the city, The Crimson Plate offers a unique blend of traditional French cuisine and modern culinary innovation. Our chefs meticulously source local ingredients to create seasonal menus that promise an unforgettable dining experience. Perfect for anniversaries, business dinners, or simply a night of exquisite flavor.</p> -->
+            <p>{{Restaurant.about_restaurant}}</p>
+        </div>
+    </div>
+
+    <!-- DIV 3 (Reviews - 25% Desktop) -->
+    <div class="div-reviews">
+        <h2 class="reviews-title">Reviews</h2>
+
+        <!-- Main Rating Score -->
+        <div class="rating-main">
+            <span class="rating-score">{{ratings.average_rating}}</span>
+            <div>
+                <div class="rating-stars">
+                    {% for star in 5|range_num %}
                     {% if ratings.average_rating >= forloop.counter %}
-                    <i class="fas fa-star" style="color: gold;"></i> 
+                    <i class="fas fa-star" style="color: gold;"></i>
                     {% elif ratings.average_rating > forloop.counter0 %}
-                    <i class="fas fa-star-half-alt" style="color: gold;"></i> 
+                    <i class="fas fa-star-half-alt" style="color: gold;"></i>
                     {% else %}
                     <i class="far fa-star" style="color: gold;"></i>
                     {% endif %}
                     {% endfor %}
-                         </div>
-                    <span class="rating-count">Verified by Customers</span>
                 </div>
-            </div>
-            
-            <!-- Rating Bars (Responsive) -->
-            <div class="rating-bars">
-                <!-- 5.0 -->
-                <div class="rating-bar-row">
-                    <p>5.0</p>
-                    <div class="progress-bar-container">
-                        <div id="five-star" class="progress-bar" style="width: 70%;" data-val="{{ratings.five_star}}"></div>
-                    </div>
-                    <span>{{ratings.five_star}} reviews</span>
-                </div>
-                <!-- 4.0 -->
-                <div class="rating-bar-row">
-                    <p>4.0</p>
-                    <div class="progress-bar-container">
-                        <div id="four-star" class="progress-bar" style="width: 30%;" data-val="{{ratings.four_star}}"></div>
-                    </div>
-                    <span>{{ratings.four_star}} reviews</span>
-                </div>
-                <!-- 3.0 -->
-                <div class="rating-bar-row">
-                    <p>3.0</p>
-                    <div class="progress-bar-container">
-                        <div id="three-star" class="progress-bar" style="width: 20%;" data-val="{{ratings.three_star}}"></div>
-                    </div>
-                    <span>{{ratings.three_star}} reviews</span>
-                </div>
-                <!-- 2.0 -->
-                <div class="rating-bar-row">
-                    <p>2.0</p>
-                    <div class="progress-bar-container">
-                        <div id="two-star" class="progress-bar" style="width: 5%;" data-val="{{ratings.two_star}}"></div>
-                    </div>
-                    <span>{{ratings.two_star}} reviews</span>
-                </div>
-                <!-- 1.0 -->
-                <div class="rating-bar-row">
-                    <p>1.0</p>
-                    <div class="progress-bar-container">
-                        <div id="one-star" class="progress-bar" style="width: 45%;" data-val="{{ratings.one_star}}"></div>
-                    </div>
-                    <span>{{ratings.one_star}} reviews</span>
-                </div>
+                <span class="rating-count">Verified by Customers</span>
             </div>
         </div>
 
-        <!-- DIV 4 (Testimonial Carousel - 75% Desktop) -->
-        <div class="div-testimonials">
-            <h2 class="reviews-title" style="color: white; border-bottom-color: rgba(255, 255, 255, 0.3);">What Our Guests Say</h2>
-            <div class="carousel-container">
-                <div class="carousel-track" id="testimonial-track">
-                    <!-- Slide 1 -->
-                     {% for testimonial in testimonials %}
-                    <div class="testimonial-slide">
-                        <div class="testimonial-header">
-                            <img src='https://placehold.co/60x60/ffffff/000000?text={{testimonial.creator_name|slice:":1"}}' onerror="this.src='https://placehold.co/60x60/ffffff/000000?text=P';" alt="Testimonial Photo" class="testimonial-img">
-                            <span class="testimonial-name">{{testimonial.creator_name}}</span>
-                        </div>
-                        <p class="testimonial-content">{{testimonial.text}}</p>
-                    </div>   
-                    {% endfor %}                
+        <!-- Rating Bars (Responsive) -->
+        <div class="rating-bars">
+            <!-- 5.0 -->
+            <div class="rating-bar-row">
+                <p>5.0</p>
+                <div class="progress-bar-container">
+                    <div id="five-star" class="progress-bar" style="width: 70%;" data-val="{{ratings.five_star}}"></div>
                 </div>
+                <span>{{ratings.five_star}} reviews</span>
+            </div>
+            <!-- 4.0 -->
+            <div class="rating-bar-row">
+                <p>4.0</p>
+                <div class="progress-bar-container">
+                    <div id="four-star" class="progress-bar" style="width: 30%;" data-val="{{ratings.four_star}}"></div>
+                </div>
+                <span>{{ratings.four_star}} reviews</span>
+            </div>
+            <!-- 3.0 -->
+            <div class="rating-bar-row">
+                <p>3.0</p>
+                <div class="progress-bar-container">
+                    <div id="three-star" class="progress-bar" style="width: 20%;" data-val="{{ratings.three_star}}">
+                    </div>
+                </div>
+                <span>{{ratings.three_star}} reviews</span>
+            </div>
+            <!-- 2.0 -->
+            <div class="rating-bar-row">
+                <p>2.0</p>
+                <div class="progress-bar-container">
+                    <div id="two-star" class="progress-bar" style="width: 5%;" data-val="{{ratings.two_star}}"></div>
+                </div>
+                <span>{{ratings.two_star}} reviews</span>
+            </div>
+            <!-- 1.0 -->
+            <div class="rating-bar-row">
+                <p>1.0</p>
+                <div class="progress-bar-container">
+                    <div id="one-star" class="progress-bar" style="width: 45%;" data-val="{{ratings.one_star}}"></div>
+                </div>
+                <span>{{ratings.one_star}} reviews</span>
             </div>
         </div>
-
-        <!-- DIV 5 (Footer Banner - Full Width) -->
-        <div class="div-footer">
-            <span>Discover The Crimson Plate Experience</span>
-        </div>
-        
-
     </div>
 
-    <form action="../../checkout/" method="post" style="display:none;" id="reservationForm">
-        {% csrf_token %}
-        <input type="hidden" name="name" id="bookedName">
-        <input type="hidden" name="date" id="form_date">
-        <input type="hidden" name="start_time" id="form_start">
-        <input type="hidden" name="end_time" id="form_end">
-        <input type="hidden" name="party_size" id="form_party">
-        <input type="hidden" name="seating" id="form_seating">
-        <input type="hidden" name="price" id="form_price">
-    </form>
+    <!-- DIV 4 (Testimonial Carousel - 75% Desktop) -->
 
-    <!-- flatpickr JS (ensure loaded before moye2.js uses it) -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="{% static 'Reservations/js/moye2.js' %}"></script>
+    <div class="div-testimonials">
+        <h2 class="reviews-title">What Our Guests Say</h2>
+
+        <div class="carousel-container">
+            <div class="carousel-track" id="testimonial-track">
+                {% if not testimonials.count > 0 %}
+                <p>No Testimonails to show</p>
+                {% else %} 
+                {% for testimonial in testimonials %}
+                <div class="testimonial-slide">
+                    <div class="testimonial-header">
+                        <img src="https://placehold.co/60x60/ffffff/000000?text={{testimonial.creator_name|initials}}" alt="Photo" class="testimonial-img">
+                        <span class="testimonial-name">{{testimonial.creator_name}}</span>
+                    </div>
+                    <i class="fas fa-quote-left quote-icon"></i>
+                    <p class="testimonial-content">{{testimonial.text}}</p>
+                </div>
+                {% endfor %}        
+                {% endif %}
+
+
+            </div>
+        </div>
+
+        <div class="carousel-dots" id="carousel-dots"></div>
+    </div>
+
+    <!-- DIV 5 (Footer Banner - Full Width) -->
+    <div class="div-footer">
+        <span>Discover The Crimson Plate Experience</span>
+    </div>
+
+
+</div>
+
+<form action="../../checkout/" method="post" style="display:none;" id="reservationForm">
+    {% csrf_token %}
+    <input type="hidden" name="name" id="bookedName">
+    <input type="hidden" name="date" id="form_date">
+    <input type="hidden" name="start_time" id="form_start">
+    <input type="hidden" name="end_time" id="form_end">
+    <input type="hidden" name="party_size" id="form_party">
+    <input type="hidden" name="seating" id="form_seating">
+    <input type="hidden" name="price" id="form_price">
+</form>
+
+<!-- flatpickr JS (ensure loaded before moye2.js uses it) -->
+<input type="hidden" value="{{no_of_testimonials}}" id="no_of_testimonials">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{% static 'Reservations/js/moye2.js' %}"></script>
 
 {% endblock main %}

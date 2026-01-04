@@ -36,11 +36,6 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.logo-header h1 i {
-    color: var(--ternary-color);
-    margin-right: 0.25rem;
-}
-
 .logo-header p {
     font-size: 0.8rem;
     font-weight: 600;
@@ -75,35 +70,30 @@ body {
     border-bottom-color: var(--secondary-color);
 }
 
-/* Form Card */
-.form-card {
-    position: relative;
-}
+/* VIEWPORT & SLIDER */
+.form-card { position: relative; }
 
-/* VIEWPORT (visible window) */
 .form-slider-viewport {
     overflow: hidden;
     border-radius: 0.5rem;
     background-color: var(--card-overlay);
     padding: 1.5rem 1.5rem 0;
-    transition: height 0.35s ease; /* FIXED */
+    transition: height 0.35s ease;
 }
 
-/* SLIDER (moves vertically) */
 .form-slider {
     display: flex;
-    flex-direction: column; /* CRITICAL — stack properly */
-    transition: transform 0.35s ease; /* FIXED */
+    flex-direction: column;
+    transition: transform 0.35s ease;
 }
 
-/* Each Form */
 .auth-form {
-    flex-shrink: 0;        /* CRITICAL — prevents collapsing */
+    flex-shrink: 0;
     width: 100%;
     padding-bottom: 1.5rem;
 }
 
-/* Input Group */
+/* INPUT GROUPS - SHARED STYLES */
 .input-group {
     display: flex;
     align-items: center;
@@ -118,9 +108,9 @@ body {
     color: var(--secondary-color);
 }
 
-.input-group input[type="text"],
-.input-group input[type="password"],
-.input-group input[type="email"] {
+/* Unified styling for ALL input types */
+.input-group input, 
+.input-group select {
     background: none;
     border: none;
     outline: none;
@@ -129,6 +119,23 @@ body {
     font-size: 1rem;
     padding: 0.5rem 0;
     font-weight: 600;
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* Fix for Date and Select colors */
+.input-group input[type="date"] {
+    color-scheme: dark; /* Makes the calendar icon white */
+}
+
+.input-group select {
+    cursor: pointer;
+}
+
+.input-group select option {
+    background-color: #0a2e2a; 
+    color: white;
 }
 
 .input-group input::placeholder {
@@ -136,7 +143,40 @@ body {
     font-weight: 400;
 }
 
-/* Submit Button */
+/* GENDER & DOB ROW */
+.input-row {
+    display: flex;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.input-row .input-group {
+    flex: 1;
+}
+
+/* FILE INPUT CUSTOMIZATION */
+.file-input-group {
+    position: relative;
+}
+
+.file-input-group input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.file-input-group label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    font-weight: 400;
+    text-align: left;
+    width: 100%;
+}
+
+/* SUBMIT BUTTON */
 .submit-btn {
     width: 100%;
     padding: 1rem;
@@ -155,71 +195,14 @@ body {
     box-shadow: 0 6px 20px hsla(30, 80%, 55%, 0.6);
 }
 
-/* Version Text */
-.version-text {
-    font-size: 0.8rem;
-    margin-top: 2rem;
-    color: var(--ternary-color);
-    font-weight: 600;
-}
+/* OTHER STYLES */
+.version-text { font-size: 0.8rem; margin-top: 2rem; color: var(--ternary-color); font-weight: 600; }
 
-/* Checkbox Group */
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 1.5rem 0 1rem 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--secondary-color);
-}
+.messages { margin: 20px; }
+.msg { padding: 12px 16px; border-radius: 8px; margin-bottom: 10px; font-weight: 500; }
+.msg.success { background: #d1fae5; color: #065f46; }
+.msg.error { background: #fee2e2; color: #b91c1c; }
 
-.checkbox-group input {
-    margin-right: 0.5rem;
-    width: 1rem;
-    height: 1rem;
-    accent-color: var(--ternary-color);
-}
-
-/* Owner Code Field */
-.owner-code-group {
-    display: none;
-    margin-top: 1.5rem;
-}
-
-.owner-code-group.visible {
-    display: flex;
-}
-
-.messages {
-    margin: 20px;
-}
-
-.msg {
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-/* Colors based on Django tags */
-.msg.success {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.msg.error {
-    background: #fee2e2;
-    color: #b91c1c;
-}
-
-.msg.warning {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.msg.info {
-    background: #dbeafe;
-    color: #1e3a8a;
+@media (max-width: 360px) {
+    .input-row { flex-direction: column; gap: 0; }
 }

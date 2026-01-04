@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 
 
@@ -61,17 +62,59 @@ class SpecialDay(models.Model):
         return f"{self.restaurant.name} - {self.date}"
 
 class Booking(models.Model):
+    STATUS_PENDING = 'pending'
+    STATUS_FINISHED = 'finished'
+    STATUS_CANCELLED = 'cancelled'
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_FINISHED, 'Finished'),
+        (STATUS_CANCELLED, 'Cancelled'),
+    ]
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING,
+    )
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     booking_start_dateTime = models.DateTimeField()
     booking_end_dateTime = models.DateTimeField()
     booking_seatingtype = models.ForeignKey(SeatingType, on_delete=models.SET_NULL, null=True)
     booking_no_of_seats = models.IntegerField()
-    card_number = models.IntegerField()
+    card_number = models.CharField(max_length=16)
     name_on_the_card = models.CharField(max_length=30)
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    seating_model = models.ForeignKey(RestaurantSeating, on_delete=models.CASCADE, null=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    
 
     def __str__(self):
         return f"{self.restaurant.name} - {self.booking_start_dateTime} to {self.booking_end_dateTime}"
+
+    def save(self, *args, **kwargs):
+        # Automatically calculate total_price before saving
+        if self.seating_model:
+            self.total_price = self.booking_no_of_seats * self.seating_model.price_per_seat
+        else:
+            self.total_price = 0
+        super().save(*args, **kwargs)
+
+
+
+    def cancel(self):
+        if self.status == self.STATUS_PENDING:
+            self.status = self.STATUS_CANCELLED
+            self.save()
+        else:
+            raise ValueError("Cannot cancel a booking that is already finished.")
+
+    def mark_finished(self):
+        if self.status == self.STATUS_PENDING:
+            self.status = self.STATUS_FINISHED
+            self.save()
+
 
 
 class Testimonials(models.Model):
@@ -95,6 +138,7 @@ class ReviewSummary(models.Model):
     three_star = models.PositiveIntegerField(default=0)
     two_star = models.PositiveIntegerField(default=0)
     one_star = models.PositiveIntegerField(default=0)
+    points = models.PositiveIntegerField(default=0)
 
     def total_reviews(self):
         return (
@@ -126,6 +170,55 @@ class ReviewSummary(models.Model):
     
     def __str__(self):
         return f"{self.average_rating()} ratings of {self.restaurant.name}"
-    
- 
 
+
+
+class UserProfile(models.Model):
+
+    class Gender(models.TextChoices):
+        MALE = 'M', 'Male'
+        FEMALE = 'F', 'Female'
+        OTHER = 'O', 'Other'
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
+
+    image = models.ImageField(upload_to='user_images/', blank=True, null=True)
+    gender = models.CharField(
+        max_length=1,
+        choices=Gender.choices,
+        blank=True,
+        null=True
+    )
+    date_of_birth = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+
+    
+
+class FavouriteRestaurant(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='favourites'
+    )
+    restaurant = models.ForeignKey(
+        'Restaurant',
+        on_delete=models.CASCADE,
+        related_name='fans'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'restaurant'],
+                name='unique_user_restaurant'
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user} → {self.restaurant}"

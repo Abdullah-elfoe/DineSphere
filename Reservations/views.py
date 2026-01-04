@@ -289,6 +289,18 @@ def format_to_ampm(dt_str):
 
 def home(request):
     restaurants = Restaurant.objects.filter(is_approved=True)
+    
+    if request.user.is_authenticated:
+        user_favs = FavouriteRestaurant.objects.filter(user=request.user).values_list('restaurant_id', flat=True)
+        # adding temporary is_favourite attribute to each restaurant
+        restaurants = restaurants.annotate(
+            is_favourite=models.Case(
+                models.When(id__in=user_favs, then=models.Value(True)),
+                default=models.Value(False),
+                output_field=models.BooleanField()
+            )
+        )
+        user_image = UserProfile.objects.filter(user=request.user).first().image.url
 
     
     min_prices = []
@@ -299,7 +311,9 @@ def home(request):
     combined = zip(restaurants,  [ReviewSummary.objects.filter(restaurant=x).first() for x in restaurants], min_prices)
     return render(request, "Reservations/home.html", {
         "Restaurants": restaurants,
-        "combined":combined
+        "combined":combined,
+        "user_image": user_image if request.user.is_authenticated else None,
+        "footer": True
     })
 
 def auth(request):
@@ -331,7 +345,8 @@ def booking(request, Restaurant_name):
         'prices':dumps(prices),
         'ratings':ratings,
         'restaurant':restaurant,
-        'calendar':dumps(calendar, cls=DjangoJSONEncoder)
+        'calendar':dumps(calendar, cls=DjangoJSONEncoder),
+        'footer': True
         }
     return render(request, "Reservations/booking.html", context=context)
 
@@ -355,7 +370,8 @@ def checkout(request):
     "end_time": format_to_ampm(end_time),
     "party_size": party_size,
     "seating": seating,
-    "price":price
+    "price":price,
+    "footer": True
 }
 
     
@@ -471,6 +487,9 @@ def signup_user(request):
         username = request.POST.get("username")
         email = request.POST.get("email")
         password = request.POST.get("password")
+        dob = request.POST.get("dob")
+        gender = request.POST.get("gender")
+        image = request.FILES.get("image")
 
         # Validate input
         if not username or not password or not email:
@@ -485,6 +504,13 @@ def signup_user(request):
         # Create user
         user = User.objects.create_user(username=username, email=email, password=password)
         user.save()
+        user_profile = UserProfile.objects.create(
+            user=user,
+            date_of_birth=dob,
+            gender=gender,
+            image=image
+        )
+        user_profile.save()
 
         messages.success(request, "Account created successfully! Please log in.")
         return redirect("login")  # your login route
@@ -604,4 +630,91 @@ def _404(request, _=None, _2=None, _3=None, _4=None, _5=None):
     return render(request, "Reservations/404.html", {
         "message_title":"Page Not Found",
         "message":"""Uh oh, we can't seem to find the page you're looking for. Try going back to the previous page or see our for more information"""
+    })
+
+
+def settings(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    user_profile = UserProfile.objects.filter(user=request.user).first()
+    bookings = Booking.objects.filter(customer=request.user).order_by('-created_at')
+    completed_booking = bookings.filter(status=Booking.STATUS_FINISHED)
+    pending_booking = bookings.filter(status=Booking.STATUS_PENDING)
+    canceled_booking = bookings.filter(status=Booking.STATUS_CANCELLED)
+    return render(request, "Reservations/settings.html", {
+        "user_profile": user_profile,
+        "footer":False,
+        "completed_booking": completed_booking if len(completed_booking) > 0 else None,
+        "pending_booking": pending_booking if len(pending_booking) > 0 else None,
+        "canceled_booking": canceled_booking if len(canceled_booking) > 0 else None,
+    })
+
+
+def cancelBooking(request, booking_id):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    booking = Booking.objects.filter(id=booking_id, customer=request.user).first()
+    if booking.status == Booking.STATUS_PENDING:
+        booking.status = Booking.STATUS_CANCELLED
+        booking.save()
+    return redirect("settings")
+
+
+def registration(request):
+    if request.method == "POST":
+        name = request.POST.get("res_name")
+        title = request.POST.get("res_title")
+        image = request.FILES.get("res_image")
+        about = request.POST.get("res_about")
+        opening_hour = request.POST.get("open_hour")
+        closing_hour = request.POST.get("close_hour")
+        slot_duration = request.POST.get("slot_duration")
+        advance_booking_days = request.POST.get("advance_days")
+        fb_link = request.POST.get("fb_link")
+        web_link = request.POST.get("web_link")
+        seating_types = request.POST.getlist("seat_type[]")
+        seating_prices = request.POST.getlist("seat_price[]")
+        available_seats_list = request.POST.getlist("available_seats[]")
+
+         # Validate input
+        print(request.FILES.get("res_image"))
+        print("{"*100)
+
+        restaurant = Restaurant(
+            name=name,
+            title=title,
+            image=image,
+            about_restaurant=str(about),
+            default_opening_hour=int(opening_hour),
+            default_closing_hour=int(closing_hour),
+            slot_duration_minutes=int(slot_duration),
+            allow_advance_booking_days=int(advance_booking_days),
+            fb_link=fb_link,
+            website_link=web_link,
+            is_approved=False  # New registrations are not approved by default
+        )
+        restaurant.save()
+        
+        ReviewSummary.objects.create(
+            restaurant=restaurant
+            )
+        for seat_type_name, seat_price, available_seats in zip(seating_types, seating_prices, available_seats_list):
+            seating_type = SeatingType.objects.filter(name=seat_type_name).first()
+            if seating_type:
+                restaurant_seating = RestaurantSeating(
+                    restaurant=restaurant,
+                    seating_type=seating_type,
+                    total_seats=int(available_seats),
+                    available_seats=int(available_seats),
+                    price_per_seat=int(seat_price)
+                )
+                restaurant_seating.save()
+
+        messages.success(request, "Restaurant registered successfully! Awaiting approval.")
+        return redirect("home")
+
+    return render(request, "Reservations/registration.html", {
+        "seatingtype": SeatingType.objects.all()
     })

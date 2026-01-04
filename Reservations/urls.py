@@ -14,11 +14,13 @@ urlpatterns = [
     path("auth/", views.auth, name="auth"),
     path("Reservation/<slug:Restaurant_name>/", views.booking, name="Booking"),
     path("checkout/", views.checkout, name="Checkout"),
-    path("Restaurant_Registration/", views.home, name="Restaurant_Registration"),
+    path("Restaurant-registration/", views.registration, name="Restaurant_Registration"),
     path("signup/", views.signup_user, name="signup"),
     path("login/", views.login_user, name="login"),
     path("logout/", views.logout_user, name="logout"),
     path("placeOrder/", views.placeOrder, name="place"),
+    path("settings/", views.settings, name="settings"),
+    path("cancel-booking/<int:booking_id>/", views.cancelBooking, name="cancelBooking"),
     path("api/auth/<slug:action>", views.handleAuthAPI, name="handleAuthAPI"),
 
     # ----------------- REST API routes -----------------

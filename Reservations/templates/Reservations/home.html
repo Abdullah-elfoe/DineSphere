@@ -24,33 +24,34 @@
             <ul class="nav-items">
                 <li><a href="/">Home</a></li>
                 <li><a href="/#who">About</a></li>
-                <li><a href="/Restaurant_Registration">Register</a></li>
-                <li><a href="/#FAQsection">FAQs</a></li>
+                <li><a href="/Restaurant-registration">Register</a></li>
+                <li><a href="/settings">Settings</a></li>
             </ul>
             
             <div class="nav-actions">
-                {% if request.user.is_authenticated %}
-               <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: inline;">
-                    {% csrf_token %}
-                    
-                    <button type="button" id="openLogoutModal" style="background: none; border: 1px; padding: 0; cursor: pointer;">
-                        
-                        <img src="https://placehold.co/40x40/008000/D88938?text={{ request.user.username|initials }}" 
-                            alt="{{ request.user.username }}" 
-                            style="border-radius: 30px; border: 1px solid white;">
-                    </button>
-                    
-                </form>
-                
-                {% else %}
-                <a href="/auth" class="back-to-top"
-  
+    {% if request.user.is_authenticated %}
+    <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: inline;">
+        {% csrf_token %}
+        <button type="button" id="openLogoutModal" style="background: none; border: none; padding: 0; cursor: pointer;">
+            {% if request.user.profile.image %}
+                <img src="{{ request.user.profile.image.url }}" 
+                     alt="{{ request.user.username }}" 
+                     style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid white; object-fit: cover;">
+            {% else %}
+                <img src="https://placehold.co/40x40/008000/D88938?text={{ request.user.username|initials }}" 
+                     alt="{{ request.user.username }}" 
+                     style="border-radius: 50%; border: 1px solid white;">
+            {% endif %}
+        </button>
+    </form>
+    {% else %}              
+      <a href="/auth" class="back-to-top"
                     style="border: 1px solid var(--secondary-color); border-radius: 8px; color: var(--primary-color); ">Login</a>
                 <a href="/auth" class="back-to-top"
                     style="border: 1px solid var(--secondary-color); border-radius: 8px; color: var(--primary-color);">Signup</a>
-                {% endif %}
-            </div>
 
+        {% endif %}
+</div>
             <!-- Container for hamburger/cross swap (z-index 9001) -->
             <div class="nav-toggle-container">
                 <!-- Hamburger for small screens (display toggled by JS) -->
@@ -382,7 +383,7 @@
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/">About</a></li>
-            <li><a href="/Restaurant_Registration">Register</a></li>
+            <li><a href="/Restaurant-registration">Register</a></li>
             <li><a href="/#FAQsection">FAQs</a></li>
             <li><a href="/auth">Login</a></li>
             <li><a href="/auth">Signup</a></li>
@@ -393,9 +394,7 @@
 <script src="{% static 'Reservations/js/hero.js' %}"></script>
 <script src="{% static 'Reservations/js/search.js' %}"></script>
 
-
-
-
+<script src="{% static 'Reservations/js/footer.js' %}"></script>
 
 {% endblock main %}
 
