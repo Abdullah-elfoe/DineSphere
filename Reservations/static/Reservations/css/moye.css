@@ -268,7 +268,7 @@
 
 /* Seating Type Radio Buttons */
 .seating-type {
-    margin-bottom: 2rem;
+    /* margin-bottom: 2rem; */
     display: flex;
     gap: 1.5rem;
     flex-wrap: wrap;
@@ -295,7 +295,7 @@
 .reservation-controls {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center !important;
     margin-bottom: 2rem;
     gap: 1rem;
 }
@@ -573,6 +573,35 @@
             width: 100%;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
+    @media (max-width: 615px) {
+         .div-testimonials {
+            width: 70%;
+        }
+        
+        .div-reviews {
+            width: 76.7%;
+        } 
+        
+         .main-grid {
+            width: 60%;
+            padding: 0 10px;
+            margin: 0 20px;
+         }
+         .res-input-group {
+             width: 90%;
+            }
+            .div-image {
+               width: 80%;
+            }
+            
+         .div-footer {
+            width: 80%;
+         }
+         .div-content {
+            padding: 0;
+            width: 85%;
+         }
+    }
 
         .reviews-title {
             font-size: 1.5rem;

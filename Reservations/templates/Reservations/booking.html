@@ -20,7 +20,7 @@
 
     <!-- DIV 1 (Content/Reservation - 60% Desktop) -->
     <div class="div-content">
-        <div class="" style="display: flex; align-items: center !important; gap: 10px; height:85px;">
+        <div class="restaurant-name" style="display: flex; align-items: center !important; gap: 10px; height:85px;">
             <button onclick="window.history.back()" class="back-button">&#x21B6;</button>
             <p id="r-name" class="restaurant-name" style=" font-weight: 900;">{{Restaurant.name}}</p>
 
@@ -44,8 +44,11 @@
                 {{ratings.average_rating}} ({{ratings.total_reviews}} total reviews)
             </div>
             <div id="priceInfo" class="price">
-                ${{prices|firstPrice}}
+                Price: ${{prices|firstPrice}}
+                <!-- <div style="width: 30px;"></div> -->
+                <!-- Capacity: {{available_tables|firstPrice}} -->
             </div>
+
         </div>
 
         <!-- Reservation Strip (Stacks reverse on mobile below 768px) -->
@@ -56,15 +59,47 @@
             </div>
             <div class="res-input-group" id="startTimeContainer">
                 <span>Start Hour</span>
-                <!-- <p type="button" id="startTimeBtn" class="date-display">-</p> -->
-                <select id="startTimeBtn" class="date-display"></select>
+                <input type="time" id="startTimeBtn" class="date-display" step="900">
             </div>
             <div class="res-input-group" id="endTimeContainer">
                 <span>End Hour</span>
-                <!-- <p type="button" id="endTimeBtn" class="date-display">-</p> -->
-                <select id="endTimeBtn" disabled class="date-display"></select>
+                <input type="time" id="endTimeBtn" class="date-display" step="900">
             </div>
         </div>
+
+        <div class="reservation-controls"
+            style="margin-top: 15px; display: none; gap: 20px;" id="merge">
+            
+            <div>
+                <span style="font-weight:bold; font-size: 0.9rem;">Merge Tables: </span>
+                <span id="display-merge" style="color: #555;"><input type="checkbox" name="merge" value="yes" id=""></span>
+            </div>
+        </div>
+        <div id="seatingsAllowed" class="reservation-controls" data-seatingsallowed="{{available_tables}}"
+            data-prices="{{ prices }}">
+            <div class="seating-type" id="seating-type">
+                <label>Seating Type:</label>
+                {% for rs in Seating %}
+                <label>
+                    <input type="radio" name="seating" value="{{ rs.seating_type.name }}" 
+                    {% if forloop.first %} checked="true" {% endif %} 
+                    data-available-seats="{{ rs.available_tables }}"
+                    onclick="updateSelectionDetails(this)"> {{ rs.seating_type.name }}
+                </label>
+                {% endfor %}
+            </div>
+            <div style="width: fit-content; display: flex;gap: 40px;">
+                <div>
+                <span style="font-weight:bold; font-size: 0.9rem;">Price: </span>
+                <span id="display-price" style="color: #27ae60; font-weight: bold;">$0.00</span>
+            </div>
+            <div>
+                <span style="font-weight:bold; font-size: 0.9rem;">Seats Per Table: </span>
+                <span id="display-capacity" style="color: #555;">0</span>
+            </div>
+            </div>
+        </div>
+
 
         <!-- Hidden script to store calendar JSON -->
         <script type="application/json" id="calendarData">
@@ -78,25 +113,8 @@
 
 
         <!-- Increment/Decrement Panel and Reserve Button -->
-        <div id="seatingsAllowed" class="reservation-controls" data-seatingsallowed="{{available_seats}}"
+        <div id="seatingsAllowed" class="reservation-controls" data-seatingsallowed="{{available_tables}}"
             data-prices="{{ prices }}">
-
-
-
-
-            <div class="seating-type" id="seating-type">
-                <label>Seating Type:</label>
-                {% for rs in Seating %}
-                <label>
-                    <input type="radio" name="seating" value="{{ rs.seating_type.name }}" {% if forloop.first %}
-                        checked="true" {% endif %} data-available-seats="{{ rs.available_seats }}"
-                        onclick="changeIndex(Number('{{ forloop.counter0 }}'))">
-                    {{ rs.seating_type.name }}
-                </label>
-                {% endfor %}
-            </div>
-
-
 
 
             <!-- Party Size Control -->
@@ -204,17 +222,18 @@
             <div class="carousel-track" id="testimonial-track">
                 {% if not testimonials.count > 0 %}
                 <p>No Testimonails to show</p>
-                {% else %} 
+                {% else %}
                 {% for testimonial in testimonials %}
                 <div class="testimonial-slide">
                     <div class="testimonial-header">
-                        <img src="https://placehold.co/60x60/ffffff/000000?text={{testimonial.creator_name|initials}}" alt="Photo" class="testimonial-img">
+                        <img src="https://placehold.co/60x60/ffffff/000000?text={{testimonial.creator_name|initials}}"
+                            alt="Photo" class="testimonial-img">
                         <span class="testimonial-name">{{testimonial.creator_name}}</span>
                     </div>
                     <i class="fas fa-quote-left quote-icon"></i>
                     <p class="testimonial-content">{{testimonial.text}}</p>
                 </div>
-                {% endfor %}        
+                {% endfor %}
                 {% endif %}
 
 
@@ -232,10 +251,10 @@
 
 </div>
 
-<form action="../../checkout/" method="post" style="display:none;" id="reservationForm">
+<form action="../../checkout/" method="post" style="display:block;" id="reservationForm">
     {% csrf_token %}
-    <input type="hidden" name="name" id="bookedName">
-    <input type="hidden" name="date" id="form_date">
+    <input type="text" name="name" id="bookedName" value="{{Restaurant.name}}">
+    <input type="text" name="date" id="form_date">
     <input type="hidden" name="start_time" id="form_start">
     <input type="hidden" name="end_time" id="form_end">
     <input type="hidden" name="party_size" id="form_party">
@@ -248,5 +267,417 @@
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="{% static 'Reservations/js/moye2.js' %}"></script>
+
+<!-- 
+<script>
+    // Global storage for AJAX results
+    let existingBookings = [];
+    const cooldownMinutes = 15; // Set your desired cooldown here
+
+    // 1. Time Normalization (Midnight handling: 6 PM to 1 AM)
+    function getNormalizedMinutes(timeStr) {
+        if (!timeStr) return null;
+        const [h, m] = timeStr.split(':').map(Number);
+        let totalMinutes = (h * 60) + m;
+        // Treat 12:00 AM to 5:59 AM as the "next day"
+        if (h < 6) totalMinutes += 1440; 
+        return totalMinutes;
+    }
+
+    // Helper to extract time from ISO '2026-01-22T00:45:00Z'
+    function getMinutesFromISO(isoString) {
+        if (!isoString) return null;
+        const timePart = isoString.split('T')[1].substring(0, 5); 
+        return getNormalizedMinutes(timePart);
+    }
+
+    // 2. AJAX: Fetch Bookings for Selected Date
+    function fetchBookings(dateStr) {
+        const restaurantName = document.getElementById('r-name').innerText.trim();
+        const url = `/getThisBooking/${restaurantName}/${dateStr}/`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // Assuming data is the array you provided
+                existingBookings = data; 
+                console.log("Bookings fetched:", existingBookings);
+                calculateLiveCapacity();
+            })
+            .catch(error => console.error('Error fetching bookings:', error));
+    }
+
+    // 3. Perfect Overlap Logic & Capacity Calculation
+    function calculateLiveCapacity() {
+        const startVal = document.getElementById('startTimeBtn').value;
+        const endVal = document.getElementById('endTimeBtn').value;
+        const selectedSeating = document.querySelector('input[name="seating"]:checked');
+
+        if (!startVal || !endVal || !selectedSeating) return;
+
+        const userStart = getNormalizedMinutes(startVal);
+        const userEnd = getNormalizedMinutes(endVal);
+        const seatingTypeName = selectedSeating.value;
+        
+        // Total tables for this seating type
+        const totalTables = parseInt(selectedSeating.getAttribute('data-available-seats'));
+
+        let bookedCount = 0;
+
+        existingBookings.forEach(booking => {
+            // Match seating type name exactly
+            if (booking.booking_seatingtype__name === seatingTypeName) {
+                
+                const bStart = getMinutesFromISO(booking.booking_start_dateTime);
+                const bEndRaw = getMinutesFromISO(booking.booking_end_dateTime);
+                
+                // Add cooldown to the existing booking's end time
+                const bEndWithCooldown = bEndRaw + cooldownMinutes;
+
+                // Perfect Overlap Algorithm: (StartA < EndB) AND (EndA > StartB)
+                // 
+                if (userStart < bEndWithCooldown && userEnd > bStart) {
+                    bookedCount++; 
+                }
+            }
+        });
+
+        const finalCapacity = totalTables - bookedCount;
+        const display = document.getElementById('display-capacity');
+        
+        display.innerText = finalCapacity > 0 ? finalCapacity : "0 (Full)";
+        display.style.color = finalCapacity <= 0 ? "#d9534f" : "#2ecc71";
+    }
+
+    // 4. Flatpickr Setup
+    flatpickr("#dateBtn", {
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function (selectedDates, dateStr, instance) {
+            if (selectedDates.length > 0) {
+                const datePart = instance.formatDate(selectedDates[0], "Y-m-d");
+                document.getElementById('dateBtn').innerText = datePart;
+                document.getElementById('form_date').value = datePart;
+                
+                // Fetch data for the new date
+                fetchBookings(datePart);
+            }
+        }
+    });
+
+    // 5. Validation & Event Listeners
+    const startInput = document.getElementById('startTimeBtn');
+    const endInput = document.getElementById('endTimeBtn');
+
+    function validateTimeSelection() {
+        const startMins = getNormalizedMinutes(startInput.value);
+        const endMins = getNormalizedMinutes(endInput.value);
+        const minBound = 1080; // 6:00 PM
+        const maxBound = 1500; // 1:00 AM
+
+        if (startMins !== null) {
+            if (startMins < minBound || startMins > maxBound) {
+                alert("Please select a start time between 6:00 PM and 1:00 AM.");
+                startInput.value = "";
+                return;
+            }
+        }
+
+        if (startMins && endMins) {
+            if (endMins <= startMins) {
+                alert("End time must be later than Start time.");
+                endInput.value = "";
+            } else if (endMins > maxBound) {
+                alert("Booking must end by 1:00 AM.");
+                endInput.value = "";
+            }
+        }
+
+        document.getElementById('form_start').value = startInput.value;
+        document.getElementById('form_end').value = endInput.value;
+        calculateLiveCapacity();
+    }
+
+    function updateSelectionDetails(radioElement) {
+        const container = document.getElementById('seatingsAllowed');
+        let pricesAttr = container.getAttribute('data-prices');
+        const pricesArray = pricesAttr.replace(/[\[\]]/g, '').split(',');
+
+        const allRadios = Array.from(document.getElementsByName('seating'));
+        const currentIndex = allRadios.indexOf(radioElement);
+
+        const capacity = radioElement.getAttribute('data-available-seats');
+        const price = pricesArray[currentIndex] ? pricesArray[currentIndex].trim() : "0";
+
+        document.getElementById('display-capacity').innerText = capacity;
+        document.getElementById('display-price').innerText = "$" + price;
+        
+        document.getElementById('form_seating').value = radioElement.value;
+        document.getElementById('form_price').value = price;
+        
+        calculateLiveCapacity();
+    }
+
+    startInput.addEventListener('change', validateTimeSelection);
+    endInput.addEventListener('change', validateTimeSelection);
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const selectedRadio = document.querySelector('input[name="seating"]:checked');
+        if (selectedRadio) updateSelectionDetails(selectedRadio);
+    });
+
+    function placeOrder() {
+        const dateBtnText = document.getElementById('dateBtn').innerText;
+        if (!startInput.value || !endInput.value || dateBtnText === "Select Date") {
+            alert("Please complete the date and time selection.");
+            return;
+        }
+        document.getElementById('reservationForm').submit();
+    }
+</script> -->
+
+<!-- <script>
+    let existingBookings = [];
+        function fetchBookings(dateStr) {
+    const restaurantName = document.getElementById('r-name').innerText.trim();
+    const url = `/getThisBooking/${restaurantName}/${dateStr}/`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Assuming data is a list of bookings: [{start: "18:30", end: "20:00", seating: "Indoor"}, ...]
+            existingBookings = data; 
+            console.log("Bookings for this day:", existingBookings);
+            
+            // Re-calculate capacity if times are already selected
+            calculateLiveCapacity();
+        })
+        .catch(error => console.error('Error fetching bookings:', error));
+}
+function getMinutesFromISO(isoString) {
+    if (!isoString) return null;
+    // Extract the "HH:mm" part from the ISO string
+    // Splits '2026-01-22T00:45:00Z' at 'T', then takes '00:45'
+    const timePart = isoString.split('T')[1].substring(0, 5); 
+    return getNormalizedMinutes(timePart);
+}
+
+    flatpickr("#dateBtn", {
+        enableTime: false,
+        noCalendar: false,
+        dateFormat: "Y-m-d",
+        time_24hr: true,
+        minDate: "today",
+        // Open/Close Hours (Change these to your restaurant's hours)
+        minTime: "06:00",
+        maxTime: "24:00",
+
+        // 15-minute steps
+        minuteIncrement: 15,
+
+        // Disable specific UTC ranges
+
+        onChange: function (selectedDates, dateStr, instance) {
+            if (selectedDates.length > 0) {
+                const selectedDate = selectedDates[0];
+
+                // Format for UI Display
+                const datePart = instance.formatDate(selectedDate, "Y-m-d");
+                const timePart = instance.formatDate(selectedDate, "H:i");
+
+                // Update your UI displays
+                document.getElementById('dateBtn').innerText = datePart;
+
+                // Update the Select Dropdown for Start Hour
+                const startSelect = document.getElementById('startTimeBtn');
+                startSelect.innerHTML = `<option value="${timePart}">${timePart}</option>`;
+
+                // Automatically calculate End Hour (e.g., +1 hour or based on slotDuration)
+                const duration = parseInt(document.getElementById('slotDuration').dataset.minutes) || 60;
+                const endDate = new Date(selectedDate.getTime() + duration * 60000);
+                const endTimePart = instance.formatDate(endDate, "H:i");
+
+                const endSelect = document.getElementById('endTimeBtn');
+                endSelect.disabled = false;
+                endSelect.innerHTML = `<option value="${endTimePart}">${endTimePart}</option>`;
+
+                // Update Hidden Form Fields for submission
+                document.getElementById('form_date').value = datePart;
+                document.getElementById('form_start').value = timePart;
+                document.getElementById('form_end').value = endTimePart;
+                fetchBookings(datePart);
+            }
+        }
+    });
+
+
+function calculateLiveCapacity() {
+    const startVal = document.getElementById('startTimeBtn').value;
+    const endVal = document.getElementById('endTimeBtn').value;
+    const selectedSeating = document.querySelector('input[name="seating"]:checked');
+
+    if (!startVal || !endVal || !selectedSeating) return;
+
+    // User's selected range in normalized minutes
+    const userStart = getNormalizedMinutes(startVal);
+    const userEnd = getNormalizedMinutes(endVal);
+    const seatingTypeName = selectedSeating.value;
+    
+    // Total physical tables for this section
+    const totalTables = parseInt(selectedSeating.getAttribute('data-available-seats'));
+
+    let bookedCount = 0;
+
+    existingBookings.forEach(booking => {
+        // Match seating type name exactly
+        if (booking.booking_seatingtype__name === seatingTypeName) {
+            
+            // Parse existing booking times into normalized minutes
+            const bStart = getMinutesFromISO(booking.booking_start_dateTime);
+            const bEnd = getMinutesFromISO(booking.booking_end_dateTime);
+
+            // Overlap check:
+            // Does this booking exist during the user's requested window?
+            if (userStart < bEnd && userEnd > bStart) {
+                // If the booking is for 4 people, it uses 1 "table" unit
+                // (Or use booking.booking_no_of_seats if you're counting individual chairs)
+                bookedCount++; 
+            }
+        }
+    });
+
+    const finalCapacity = totalTables - bookedCount;
+    const display = document.getElementById('display-capacity');
+    
+    display.innerText = finalCapacity > 0 ? finalCapacity : "0 (Full)";
+    display.style.color = finalCapacity <= 0 ? "#d9534f" : "#2ecc71";
+}
+
+    const startInput = document.getElementById('startTimeBtn');
+    const endInput = document.getElementById('endTimeBtn');
+    const priceSpan = document.getElementById('display-price');
+    const capacitySpan = document.getElementById('display-capacity');
+
+    // Add to your event listeners
+    startInput.addEventListener('change', () => {
+        validateTimeSelection();
+        calculateLiveCapacity();
+    });
+
+    endInput.addEventListener('change', () => {
+        validateTimeSelection();
+        calculateLiveCapacity();
+    });
+
+    // 1. Time Normalization (Midnight handling: 6 PM to 1 AM)
+    function getNormalizedMinutes(timeStr) {
+        if (!timeStr) return null;
+        const [h, m] = timeStr.split(':').map(Number);
+        let totalMinutes = (h * 60) + m;
+        if (h < 6) totalMinutes += 1440; // Treat early AM as "Next Day"
+        return totalMinutes;
+    }
+
+    function validateTimeSelection() {
+        const startMins = getNormalizedMinutes(startInput.value);
+        const endMins = getNormalizedMinutes(endInput.value);
+
+        // Define bounds: 6:00 PM (1080 mins) to 1:00 AM (1500 mins)
+        const minBound = 1080;
+        const maxBound = 1500;
+
+        if (startMins !== null) {
+            if (startMins < minBound || startMins > maxBound) {
+                alert("Please select a start time between 6:00 PM and 1:00 AM.");
+                startInput.value = "";
+                endInput.disabled = true;
+                return;
+            }
+            endInput.disabled = false;
+        }
+
+        if (startMins && endMins) {
+            if (endMins <= startMins) {
+                alert("End time must be later than Start time.");
+                endInput.value = "";
+            } else if (endMins > maxBound) {
+                alert("Booking must end by 1:00 AM.");
+                endInput.value = "";
+            }
+        }
+
+        // Update Hidden Fields for Form Submission
+        document.getElementById('form_start').value = startInput.value;
+        document.getElementById('form_end').value = endInput.value;
+    }
+
+    // 2. Pricing and Capacity Update
+ function updateSelectionDetails(radioElement) {
+    // 1. Get the parent container that holds the prices array
+    const container = document.getElementById('seatingsAllowed');
+    
+    // 2. Safely parse the prices (handling potential string/array issues)
+    let pricesAttr = container.getAttribute('data-prices');
+    // Remove brackets and split by comma to turn "[10, 20]" into an array
+    const pricesArray = pricesAttr.replace(/[\[\]]/g, '').split(',');
+
+    // 3. Find the index of the clicked radio button
+    const allRadios = Array.from(document.getElementsByName('seating'));
+    const currentIndex = allRadios.indexOf(radioElement);
+
+    // 4. Extract data
+    const capacity = radioElement.getAttribute('data-available-seats');
+    const price = pricesArray[currentIndex] ? pricesArray[currentIndex].trim() : "0";
+
+    // 5. Update UI
+    document.getElementById('display-capacity').innerText = capacity;
+    document.getElementById('display-price').innerText = "$" + price;
+    
+    // 6. Sync with Hidden Form
+    document.getElementById('form_seating').value = radioElement.value;
+    document.getElementById('form_price').value = price;
+    document.getElementById('form_party').value = document.getElementById('party-size').value;
+    calculateLiveCapacity();
+}
+    
+
+
+
+
+// Event Listeners
+    startInput.addEventListener('change', validateTimeSelection);
+    endInput.addEventListener('change', validateTimeSelection);
+
+    // Initialize display on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        const selectedRadio = document.querySelector('input[name="seating"]:checked');
+        if (selectedRadio) {
+            updateSelectionDetails(selectedRadio, 0);
+        }
+    });
+
+    // Modified placeOrder to check validation
+    function placeOrder() {
+    const startInput = document.getElementById('startTimeBtn');
+    const endInput = document.getElementById('endTimeBtn');
+    const dateBtnText = document.getElementById('dateBtn').innerText;
+
+    if (!startInput.value || !endInput.value || dateBtnText === "Select Date") {
+        alert("Please complete the date and time selection.");
+        return;
+    }
+
+    // MANDATORY: Force the hidden inputs to use the 24-hour HH:mm format
+    document.getElementById('form_date').value = dateBtnText; // YYYY-MM-DD
+    document.getElementById('form_start').value = startInput.value; // HH:mm
+    document.getElementById('form_end').value = endInput.value;   // HH:mm
+
+    document.getElementById('reservationForm').submit();
+}
+
+    
+
+</script> -->
 
 {% endblock main %}

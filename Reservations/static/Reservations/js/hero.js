@@ -1,5 +1,3 @@
-console.log("loaded");
-
 
 document.addEventListener('DOMContentLoaded', () => {
         // --- Mobile Menu Logic ---
@@ -138,24 +136,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        accordionList.querySelectorAll('.accordion-header').forEach(header => {
-            header.addEventListener('click', () => toggleAccordion(header.closest('.accordion-item')));
-            header.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    toggleAccordion(header.closest('.accordion-item'));
-                }
-            });
-        });
+        // accordionList.querySelectorAll('.accordion-header').forEach(header => {
+        //     header.addEventListener('click', () => toggleAccordion(header.closest('.accordion-item')));
+        //     header.addEventListener('keydown', (e) => {
+        //         if (e.key === 'Enter' || e.key === ' ') {
+        //             e.preventDefault();
+        //             toggleAccordion(header.closest('.accordion-item'));
+        //         }
+        //     });
+        // });
         
-        faqSearchInput.addEventListener('input', filterFaqs);
+        // faqSearchInput.addEventListener('input', filterFaqs);
         
-        // Initialize the first item's height if it's active by default 
-        const initialActiveItem = accordionList.querySelector('.accordion-item.active');
-        if (initialActiveItem) {
-            initialActiveItem.querySelector('.accordion-body').style.maxHeight = 
-                initialActiveItem.querySelector('.accordion-body').scrollHeight + "px";
-        }
+        // // Initialize the first item's height if it's active by default 
+        // const initialActiveItem = accordionList.querySelector('.accordion-item.active');
+        // if (initialActiveItem) {
+        //     initialActiveItem.querySelector('.accordion-body').style.maxHeight = 
+        //         initialActiveItem.querySelector('.accordion-body').scrollHeight + "px";
+        // }
     });
 
 

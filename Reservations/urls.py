@@ -22,6 +22,7 @@ urlpatterns = [
     path("settings/", views.settings, name="settings"),
     path("cancel-booking/<int:booking_id>/", views.cancelBooking, name="cancelBooking"),
     path("api/auth/<slug:action>", views.handleAuthAPI, name="handleAuthAPI"),
+    path("getThisBooking/<str:name>/<str:date>/", views.getThisBooking, name="getThisBooking"),
 
     # ----------------- REST API routes -----------------
     path('api/', include(router.urls)),

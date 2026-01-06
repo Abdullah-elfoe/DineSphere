@@ -30,6 +30,9 @@ class Restaurant(models.Model):
     slot_duration_minutes = models.IntegerField(default=60) # 1 hour default
     allow_advance_booking_days = models.IntegerField(default=60)
 
+    cool_down = models.IntegerField(default=30)
+    city = models.CharField(max_length=12)
+
     is_approved = models.BooleanField(default=False)
 
     def __str__(self):
@@ -39,15 +42,16 @@ class Restaurant(models.Model):
 class RestaurantSeating(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     seating_type = models.ForeignKey(SeatingType, on_delete=models.CASCADE)
-    total_seats = models.IntegerField(default=10,)
-    available_seats = models.IntegerField(default=0,)
-    price_per_seat = models.IntegerField(default=430,)
+    total_tables = models.IntegerField(default=10,)
+    available_tables = models.IntegerField(default=0,)
+    price_per_table = models.IntegerField(default=430,)
+    # price_per_hour = models.IntegerField(default=0,)
 
     class Meta:
         unique_together = ('restaurant', 'seating_type')
 
     def __str__(self):
-        return f"Restaurant:{self.restaurant} Seating:{self.seating_type} contains:{self.available_seats}/{self.total_seats}"
+        return f"Restaurant:{self.restaurant} Seating:{self.seating_type} contains:{self.available_tables}/{self.total_tables}"
 
 
 
@@ -96,7 +100,7 @@ class Booking(models.Model):
     def save(self, *args, **kwargs):
         # Automatically calculate total_price before saving
         if self.seating_model:
-            self.total_price = self.booking_no_of_seats * self.seating_model.price_per_seat
+            self.total_price = self.booking_no_of_seats * self.seating_model.price_per_table
         else:
             self.total_price = 0
         super().save(*args, **kwargs)

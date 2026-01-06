@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+from .supporting import parse_date_time
 
 from datetime import datetime
 
@@ -289,6 +289,7 @@ def format_to_ampm(dt_str):
 
 def home(request):
     restaurants = Restaurant.objects.filter(is_approved=True)
+    three_users = UserProfile.objects.all()[:3]
     
     if request.user.is_authenticated:
         user_favs = FavouriteRestaurant.objects.filter(user=request.user).values_list('restaurant_id', flat=True)
@@ -305,15 +306,16 @@ def home(request):
     
     min_prices = []
     for restaurant in restaurants:
-        seating_prices = [x.price_per_seat for x in restaurant.restaurantseating_set.all()]
+        seating_prices = [x.price_per_table for x in restaurant.restaurantseating_set.all()]
         min_price = min(seating_prices) if seating_prices else None
         min_prices.append(min_price)
-    combined = zip(restaurants,  [ReviewSummary.objects.filter(restaurant=x).first() for x in restaurants], min_prices)
+    combined = list(zip(restaurants,  [ReviewSummary.objects.filter(restaurant=x).first() for x in restaurants], min_prices))
     return render(request, "Reservations/home.html", {
         "Restaurants": restaurants,
         "combined":combined,
         "user_image": user_image if request.user.is_authenticated else None,
-        "footer": True
+        "footer": True,
+        "three_users": three_users 
     })
 
 def auth(request):
@@ -324,14 +326,15 @@ def auth(request):
 def booking(request, Restaurant_name):
     Restaurant_name = Restaurant_name.replace("-", " ").replace("_"," ")
     restaurant_obj = Restaurant.objects.filter(name=Restaurant_name).first()
+    bookings = Booking.objects.filter(restaurant=restaurant_obj, status=Booking.STATUS_PENDING)
     if not restaurant_obj.is_approved:
         return render(request, "Reservations/404.html", {
             "message_title": "Restaurant Not Approved",
             "message": """The restaurant you are trying to book is not approved yet. Please try again later."""
         })
     seating_types = restaurant_obj.restaurantseating_set.select_related('seating_type').all()
-    seating_numbers = [x.available_seats for x in seating_types]
-    prices = [x.price_per_seat for x in seating_types]
+    seating_numbers = [x.available_tables for x in seating_types]
+    prices = [x.price_per_table for x in seating_types]
     testimonials = Testimonials.objects.filter(restaurant=restaurant_obj)
     ratings = ReviewSummary.objects.filter(restaurant=restaurant_obj).first()
     restaurant, calendar = daily_calendar_view(restaurant_id=restaurant_obj.id)
@@ -341,7 +344,7 @@ def booking(request, Restaurant_name):
         'Restaurant': restaurant_obj, 
         'Seating':seating_types,
         'testimonials':testimonials,
-        'available_seats':dumps(seating_numbers),
+        'available_tables':dumps(seating_numbers),
         'prices':dumps(prices),
         'ratings':ratings,
         'restaurant':restaurant,
@@ -362,12 +365,18 @@ def checkout(request):
     party_size = request.POST.get("party_size")
     seating = request.POST.get("seating")   # from radio button
     price = request.POST.get("price")
+    try:
+        dt_obj = parse_date_time(date, start_time)
+        print(f"Successfully created datetime: {dt_obj}")
+    except Exception as e:
+        print(f"Parsing Error: {e}")
+    print(date, start_time, end_time)
     # print(date, start_time, end_time, format_to_ampm(end_time), party_size, seating)
     context = {
     "name":name,
     "date": date,
-    "start_time": format_to_ampm(start_time),
-    "end_time": format_to_ampm(end_time),
+    "start_time": start_time,
+    "end_time": end_time,
     "party_size": party_size,
     "seating": seating,
     "price":price,
@@ -564,7 +573,6 @@ def placeOrder(request):
         # --- Retrieve Data ---
         username_str = request.POST.get("username")
         user = User.objects.filter(username=username_str).first()
-        
         card_number = request.POST.get("cn")
         card_name = request.POST.get("card-name")
         start_time_str = request.POST.get("stime") # e.g., "9:00 pm"
@@ -588,34 +596,38 @@ def placeOrder(request):
         DATETIME_FORMAT = "%a, %b %d %Y %I:%M %p"
 
         # --- DATETIME CONVERSION CORE LOGIC ---
-        try:
-            # Create the full strings by injecting the current year
-            start_datetime_str = f"{date_str} {current_year} {start_time_str}"
-            end_datetime_str = f"{date_str} {current_year} {end_time_str}"
+        # try:
+        #     # Create the full strings by injecting the current year
+        #     start_datetime_str = f"{date_str} {current_year} {start_time_str}"
+        #     end_datetime_str = f"{date_str} {current_year} {end_time_str}"
             
-            # Convert the combined strings into datetime objects
-            booking_start_datetime = datetime.strptime(start_datetime_str, DATETIME_FORMAT)
-            booking_end_datetime = datetime.strptime(end_datetime_str, DATETIME_FORMAT)
+        #     # Convert the combined strings into datetime objects
+        #     booking_start_datetime = datetime.strptime(start_datetime_str, DATETIME_FORMAT)
+        #     booking_end_datetime = datetime.strptime(end_datetime_str, DATETIME_FORMAT)
         
-        except ValueError as e:
-            # This catches genuine format issues if the UI sends something unexpected
-            print(f"Datetime parsing error: {e}")
-            return redirect("home") 
+        # except ValueError as e:
+        #     # This catches genuine format issues if the UI sends something unexpected
+        #     print(f"Datetime parsing error: {e}")
+        #     return redirect("home") 
+
+
 
         # --- CREATE AND SAVE ORDER ---
         order = Booking(
-            booking_start_dateTime=booking_start_datetime,
-            booking_end_dateTime=booking_end_datetime,
+            booking_start_dateTime=parse_date_time(date_str, start_time_str),
+            booking_end_dateTime=parse_date_time(date_str, end_time_str),
             booking_seatingtype=seating,
             booking_no_of_seats=party_size,
             name_on_the_card=card_name,
-            card_number=int(card_number),
+            card_number=card_number,
             customer=user,
-            restaurant=restaurant
+            restaurant=restaurant,
+            seating_model=restaurant.restaurantseating_set.filter(seating_type=seating.pk, restaurant=restaurant.pk).first(),
             # price=30
         )
         order.save()
-        print(booking_start_datetime, booking_end_datetime)
+        print(order.booking_end_dateTime.date(), order.restaurant.name)
+        # print(booking_start_datetime, booking_end_datetime)
         
         # 🚨 FIX 3: Critical - Must return the redirect result
         return redirect("home") 
@@ -668,6 +680,8 @@ def registration(request):
         title = request.POST.get("res_title")
         image = request.FILES.get("res_image")
         about = request.POST.get("res_about")
+        city = request.POST.get("city")
+        cooldown = request.POST.get("cooldown")
         opening_hour = request.POST.get("open_hour")
         closing_hour = request.POST.get("close_hour")
         slot_duration = request.POST.get("slot_duration")
@@ -676,7 +690,7 @@ def registration(request):
         web_link = request.POST.get("web_link")
         seating_types = request.POST.getlist("seat_type[]")
         seating_prices = request.POST.getlist("seat_price[]")
-        available_seats_list = request.POST.getlist("available_seats[]")
+        available_tables_list = request.POST.getlist("available_tables[]")
 
          # Validate input
         print(request.FILES.get("res_image"))
@@ -693,6 +707,8 @@ def registration(request):
             allow_advance_booking_days=int(advance_booking_days),
             fb_link=fb_link,
             website_link=web_link,
+            city=city,
+            cool_down=cooldown,
             is_approved=False  # New registrations are not approved by default
         )
         restaurant.save()
@@ -700,15 +716,15 @@ def registration(request):
         ReviewSummary.objects.create(
             restaurant=restaurant
             )
-        for seat_type_name, seat_price, available_seats in zip(seating_types, seating_prices, available_seats_list):
+        for seat_type_name, seat_price, available_tables in zip(seating_types, seating_prices, available_tables_list):
             seating_type = SeatingType.objects.filter(name=seat_type_name).first()
             if seating_type:
                 restaurant_seating = RestaurantSeating(
                     restaurant=restaurant,
                     seating_type=seating_type,
-                    total_seats=int(available_seats),
-                    available_seats=int(available_seats),
-                    price_per_seat=int(seat_price)
+                    total_tables=int(available_tables),
+                    available_tables=int(available_tables),
+                    price_per_table=int(seat_price)
                 )
                 restaurant_seating.save()
 
@@ -718,3 +734,15 @@ def registration(request):
     return render(request, "Reservations/registration.html", {
         "seatingtype": SeatingType.objects.all()
     })
+
+
+def getThisBooking(request, name, date):
+    name = name.replace("-", " ").replace("_"," ")
+    # if request.method == "GET":
+    #     return redirect("https://www.google.com/search?sca_esv=da380046654dbbf2&sxsrf=AE3TifOTm1cmeMjYOb6irYw19ak_swngRA:1767643903557&udm=2&fbs=AIIjpHxU7SXXniUZfeShr2fp4giZ1Y6MJ25_tmWITc7uy4KIeoJTKjrFjVxydQWqI2NcOhYPURIv2wPgv_w_sE_0Sc6QqqU7k8cSQndc5mTXCIWHa5yWh8UZLeaMB2TzsL707pc1UdUOyvWrdH9KzB0rwa56e4sZMK6yB9HCSc5sZ95qH7WhtZ4UgYYwhFKAtUJ9yDKl7bQ8&q=donkey&sa=X&ved=2ahUKEwi90tfXmvWRAxVj3AIHHb4DMccQtKgLegQIFBAB&biw=1600&bih=781&dpr=1")
+    bookings = Booking.objects.filter(booking_start_dateTime__date=date, restaurant__name=name).values(
+        'id','booking_start_dateTime', 'booking_end_dateTime', 'booking_no_of_seats', 'booking_seatingtype__name'
+    )
+    
+
+    return JsonResponse(list(bookings), safe=False)

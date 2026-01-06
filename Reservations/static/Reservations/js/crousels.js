@@ -1,99 +1,122 @@
+/**
+ * DineSphere Home Page Logic - Responsive Edition
+ */
+
+function toggleFavorite(event, restaurantId) {
+    event.stopPropagation();
+    const btn = event.currentTarget;
+    const icon = btn.querySelector('i');
+    let favorites = JSON.parse(localStorage.getItem('dinesphere_favs')) || [];
+    
+    if (icon.classList.contains('fa-regular')) {
+        icon.classList.replace('fa-regular', 'fa-solid');
+        btn.classList.add('active');
+        if (!favorites.includes(restaurantId)) favorites.push(restaurantId);
+    } else {
+        icon.classList.replace('fa-solid', 'fa-regular');
+        btn.classList.remove('active');
+        favorites = favorites.filter(id => id !== restaurantId);
+    }
+    localStorage.setItem('dinesphere_favs', JSON.stringify(favorites));
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Carousel logic for all carousels
-    const carousels = document.querySelectorAll('.carousel');
-    carousels.forEach((carousel, i) => {
-        const track = carousel.querySelector('.carousel-track');
-        const cards = carousel.querySelectorAll('.card');
-        const prevBtn = carousel.querySelector('.btn-left');
-        const nextBtn = carousel.querySelector('.btn-right');
-        let index = 0;
+    // The "Inspect Element" Simulator
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+    }, 300); 
+});
+    const initCarousels = () => {
+        const carousels = document.querySelectorAll('.carousel');
+        
+        carousels.forEach((carousel, i) => {
+            const track = carousel.querySelector('.carousel-track');
+            const cards = carousel.querySelectorAll('.modern-card');
+            const prevBtn = carousel.querySelector('.btn-left');
+            const nextBtn = carousel.querySelector('.btn-right');
+            
+            if (!track || cards.length === 0) return;
 
-        function cardsPerView() {
-            if (window.innerWidth <= 480) return 1;
-            if (window.innerWidth <= 768) return 2;
-            if (window.innerWidth <= 1024) return 3;
-            if (window.innerWidth <= 1400) return 4;
-            if (window.innerWidth <= 1800) return 5;
-            return 6;
-        }
+            let index = 0;
+            const gap = 20; // Must match CSS gap
 
-        function updateCarousel() {
-            const visible = cardsPerView();
-            // Clamp index so last page always shows visible cards
-            if (index > cards.length - visible) index = 0;
-            if (index < 0) index = cards.length - visible;
-            // Calculate percent to move
-            const moveX = (index * (100 / visible));
-            track.style.transform = `translateX(-${moveX}%)`;
-            // Show/hide buttons if needed (optional)
-        }
-
-        nextBtn.addEventListener('click', () => {
-            const visible = cardsPerView();
-            index = (index + 1) % (cards.length - visible + 1);
-            updateCarousel();
-        });
-        prevBtn.addEventListener('click', () => {
-            const visible = cardsPerView();
-            index = (index - 1 + (cards.length - visible + 1)) % (cards.length - visible + 1);
-            updateCarousel();
-        });
-        window.addEventListener('resize', updateCarousel);
-
-        // Auto-slide with stagger
-        setTimeout(() => {
-            setInterval(() => {
-                const visible = cardsPerView();
-                index = (index + 1) % (cards.length - visible + 1);
-                updateCarousel();
-            }, 4000);
-        }, i * 600); // stagger start by 0.6s per carousel
-
-        updateCarousel();
-    });
-
-    // FAQs (unchanged)
-    const accordionList = document.getElementById('faqAccordion');
-    if (accordionList) {
-        const items = accordionList.querySelectorAll('.accordion-item');
-        function toggleAccordionItem(item) {
-            const isActive = item.classList.contains('active');
-            items.forEach(i => { if (i !== item) i.classList.remove('active'); });
-            if (!isActive) item.classList.add('active'); else item.classList.remove('active');
-        }
-        items.forEach(item => {
-            const header = item.querySelector('.accordion-header');
-            header.addEventListener('click', () => toggleAccordionItem(item));
-            header.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    toggleAccordionItem(item);
-                }
-            });
-        });
-        const searchInput = document.getElementById('faqSearchInput');
-        let searchTimeout;
-        const debounce = (func, delay = 300) => {
-            return function(...args) {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => func.apply(this, args), delay);
+            const getVisibleCount = () => {
+                const w = window.innerWidth;
+                if (w <= 480) return 1;
+                if (w <= 768) return 2;
+                if (w <= 1024) return 3;
+                return 5;
             };
-        };
-        const filterFaqItems = () => {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            items.forEach(item => {
-                const question = item.querySelector('.accordion-question').textContent.toLowerCase();
-                const body = item.querySelector('.accordion-body-content').textContent.toLowerCase();
-                const terms = item.getAttribute('data-search-terms') || "";
-                const combinedText = `${question} ${body} ${terms}`;
-                if (combinedText.includes(searchTerm) || searchTerm === "") {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        };
-        searchInput.addEventListener('input', debounce(filterFaqItems, 200));
+
+            const updateCarousel = () => {
+    // 1. Get current widths
+    const containerWidth = track.parentElement.offsetWidth;
+    const cardWidth = cards[0].offsetWidth;
+    const gap = 20;
+
+    // 2. Calculate how many cards are fully/mostly visible
+    // We use floor to ensure we don't get stuck if a card is 1% visible
+    const visibleCards = Math.floor(containerWidth / (cardWidth + gap));
+    
+    // 3. Fix: maxIndex should allow you to reach the very last item
+    // If visibleCards is 1 (mobile), maxIndex is cards.length - 1
+    const maxIndex = cards.length - Math.max(1, visibleCards);
+    
+    // 4. Boundary check
+    if (index > maxIndex) index = maxIndex;
+    if (index < 0) index = 0;
+
+    // 5. Move the track
+    const moveX = index * (cardWidth + gap);
+    track.style.transform = `translateX(-${moveX}px)`;
+    
+    // 6. Fix Button Visibility
+    if (prevBtn) {
+        prevBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
     }
+    if (nextBtn) {
+        // Only hide if we are at the absolute limit
+        nextBtn.style.visibility = index >= maxIndex ? 'hidden' : 'visible';
+    }
+};
+
+            nextBtn?.addEventListener('click', () => {
+                index++;
+                updateCarousel();
+            });
+
+            prevBtn?.addEventListener('click', () => {
+                index--;
+                updateCarousel();
+            });
+
+            // Touch support for mobile swipe
+            let startX, moveX;
+            track.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+            track.addEventListener('touchmove', e => moveX = e.touches[0].clientX);
+            track.addEventListener('touchend', () => {
+                if (startX - moveX > 50) index++; // swipe left
+                if (startX - moveX < -50) index--; // swipe right
+                updateCarousel();
+            });
+
+            window.addEventListener('resize', updateCarousel);
+            // Wait for images to load or small delay to get correct offsetWidth
+            setTimeout(updateCarousel, 100);
+        });
+    };
+
+    const mainPage = document.getElementById('main-page');
+    if (mainPage) {
+        // Force recalculation of layout
+        setTimeout(() => {
+            mainPage.style.height = 'auto'; // Reset height
+            mainPage.style.height = `${mainPage.scrollHeight}px`; // Force recalculation
+        }, 100);
+    }
+ 
+
+    initCarousels();
+    // syncFavoritesUI();
 });
