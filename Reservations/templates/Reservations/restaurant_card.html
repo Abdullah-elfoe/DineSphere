@@ -2,16 +2,20 @@
 <div class="modern-card {% if not is_search %}carousel-item{% endif %}" 
      data-name="{{ restaurant.name }}" 
      data-price="{{ mp }}"
+     data-restaurant-id="{{ restaurant.id }}"
+     data-isfav="{{ restaurant.is_favourite }}"
      {% if is_search %}style="display: none;"{% endif %}
      onclick="location.href='/Reservation/{{restaurant.name|space_to_value}}'">
     
     <div class="card-image-wrapper">
         <img src="{{ restaurant.image.url }}" alt="{{ restaurant.name }}" class="main-img">
-        
-        <button class="fav-btn" onclick="toggleFavorite(event, '{{ restaurant.id }}')">
+         <button class="fav-btn {% if is_favourite %} active {% endif %}" onclick="toggleFavorite(event, '{{ restaurant.id }}')">
+            {% if restaurant.is_favourite %}
+            <i class="fa-solid fa-heart"></i>
+            {% else %}
             <i class="fa-regular fa-heart"></i>
+            {% endif %}
         </button>
-
         <div class="price-badge">${{mp}}</div>
     </div>
 

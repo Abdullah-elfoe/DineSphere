@@ -290,8 +290,11 @@ def format_to_ampm(dt_str):
 def home(request):
     restaurants = Restaurant.objects.filter(is_approved=True)
     three_users = UserProfile.objects.all()[:3]
+    fav_res = []
+    user_image = None
     
     if request.user.is_authenticated:
+        
         user_favs = FavouriteRestaurant.objects.filter(user=request.user).values_list('restaurant_id', flat=True)
         # adding temporary is_favourite attribute to each restaurant
         restaurants = restaurants.annotate(
@@ -301,8 +304,13 @@ def home(request):
                 output_field=models.BooleanField()
             )
         )
-        user_image = UserProfile.objects.filter(user=request.user).first().image.url
-
+        # Get only favorite restaurants for the favorites carousel
+        favorite_restaurants = Restaurant.objects.filter(id__in=user_favs, is_approved=True).annotate(
+            is_favourite=models.Value(True, output_field=models.BooleanField())
+        )
+        user_profile = UserProfile.objects.filter(user=request.user).first()
+        if user_profile and user_profile.image:
+            user_image = user_profile.image.url
     
     min_prices = []
     for restaurant in restaurants:
@@ -310,10 +318,18 @@ def home(request):
         min_price = min(seating_prices) if seating_prices else None
         min_prices.append(min_price)
     combined = list(zip(restaurants,  [ReviewSummary.objects.filter(restaurant=x).first() for x in restaurants], min_prices))
+    favorite_min_prices = []
+    for restaurant in favorite_restaurants:
+        seating_prices = [x.price_per_table for x in restaurant.restaurantseating_set.all()]
+        min_price = min(seating_prices) if seating_prices else None
+        favorite_min_prices.append(min_price)
+    favorite_combined = list(zip(favorite_restaurants, [ReviewSummary.objects.filter(restaurant=x).first() for x in favorite_restaurants], favorite_min_prices))
+    
     return render(request, "Reservations/home.html", {
         "Restaurants": restaurants,
         "combined":combined,
         "user_image": user_image if request.user.is_authenticated else None,
+        "favorite_combined": favorite_combined,
         "footer": True,
         "three_users": three_users 
     })
@@ -746,3 +762,30 @@ def getThisBooking(request, name, date):
     
 
     return JsonResponse(list(bookings), safe=False)
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from .models import FavouriteRestaurant, Restaurant
+
+@login_required
+@require_POST
+def toggle_favourite(request):
+    """
+    Toggle favorite status of a restaurant.
+    Expects POST request with 'restaurant_id' parameter.
+    Returns JSON with success status and favorite state.
+    """
+    restaurant_id = request.POST.get('restaurant_id')
+    try:
+        restaurant = Restaurant.objects.get(id=restaurant_id)
+    except Restaurant.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Restaurant not found'}, status=404)
+
+    favourite, created = FavouriteRestaurant.objects.get_or_create(user=request.user, restaurant=restaurant)
+
+    if not created:
+        # If already exists, remove it
+        favourite.delete()
+        return JsonResponse({'success': True, 'favourited': False, 'restaurant_id': restaurant_id})
+
+    return JsonResponse({'success': True, 'favourited': True, 'restaurant_id': restaurant_id})

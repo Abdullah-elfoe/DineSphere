@@ -92,9 +92,12 @@
                 <h1 class="carousel-title">Your Favourites</h1>
                 <div class="carousel-container">
                     <div class="carousel-track" id="fav-track">
-                        {% for restaurant, review, mp in combined %}
-                        {% include "Reservations/restaurant_card.html" with restaurant=restaurant review=review mp=mp %}
-
+                        {% for restaurant, review, mp in favorite_combined %}
+                        {% include "Reservations/restaurant_card.html" with restaurant=restaurant review=review mp=mp is_favourite=True %}
+                        {% empty %}
+                        <div style="text-align: center; padding: 20px; color: #666;">
+                            <p>No favourite restaurants yet. Add some by clicking the heart icon!</p>
+                        </div>
                         {% endfor %}
                     </div>
                     <button class="carousel-btn btn-left">&#10094;</button>

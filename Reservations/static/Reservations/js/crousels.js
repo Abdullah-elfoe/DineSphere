@@ -1,25 +1,115 @@
-/**
- * DineSphere Home Page Logic - Responsive Edition
- */
+function updateFavouritesUI() { 
 
+    const items = document.querySelectorAll('.modern-card');
+    items.forEach(item => {
+        const isFav = item.getAttribute('data-isfav');
+        const favBtn = item.querySelector('.fav-btn');
+        console.log(isFav);
+        
+        if (isFav) {
+            favBtn.classList.add('active');
+        } else {
+            favBtn.classList.remove('active');
+        }
+    });
+}
 function toggleFavorite(event, restaurantId) {
     event.stopPropagation();
+    updateFavouritesUI()
     const btn = event.currentTarget;
     const icon = btn.querySelector('i');
-    let favorites = JSON.parse(localStorage.getItem('dinesphere_favs')) || [];
+    const card = btn.closest('.modern-card');
+    const restaurantName = card.getAttribute('data-name');
     
-    if (icon.classList.contains('fa-regular')) {
-        icon.classList.replace('fa-regular', 'fa-solid');
-        btn.classList.add('active');
-        if (!favorites.includes(restaurantId)) favorites.push(restaurantId);
-    } else {
-        icon.classList.replace('fa-solid', 'fa-regular');
-        btn.classList.remove('active');
-        favorites = favorites.filter(id => id !== restaurantId);
-    }
-    localStorage.setItem('dinesphere_favs', JSON.stringify(favorites));
+    // Get CSRF token from cookie
+    const csrftoken = getCookie('csrftoken');
+    
+    // Make AJAX request to toggle favorite
+    fetch('/toggle-favourite/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrftoken
+        },
+        body: new URLSearchParams({
+            'restaurant_id': restaurantId
+        })
+    })
+    .then(response => {
+        if (response.status === 302 || response.redirected) {
+            // Redirected to login
+            window.location.href = '/auth';
+            return null;
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data === null) return;
+        
+        if (data.success) {
+            if (data.favourited) {
+                // Changed to favorite
+                icon.classList.replace('fa-regular', 'fa-solid');
+                btn.classList.add('active');
+                showNotification(`${restaurantName} added to favorites!`);
+                
+                // Refresh the page or update the favorites carousel
+                location.reload();
+            } else {
+                // Removed from favorite
+                icon.classList.replace('fa-solid', 'fa-regular');
+                btn.classList.remove('active');
+                showNotification(`${restaurantName} removed from favorites!`);
+                
+                // Refresh the page to update favorites carousel
+                location.reload();
+            }
+        } else {
+            alert('Error updating favorite: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating favorite');
+    });
 }
 
+
+// Helper function to get CSRF token from cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Show simple notification
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+        font-size: 14px;
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
 document.addEventListener('DOMContentLoaded', () => {
     // The "Inspect Element" Simulator
 window.addEventListener('load', () => {
@@ -120,3 +210,5 @@ window.addEventListener('load', () => {
     initCarousels();
     // syncFavoritesUI();
 });
+
+
